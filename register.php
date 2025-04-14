@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Charger les variables d'environnement depuis le fichier .env
-require_once 'vendor/autoload.php'; // Assurez-vous que le package vlucas/phpdotenv est installé
+require_once 'vendor/autoload.php'; 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 try {
-    // Connexion à la base de données avec les informations du fichier .env
     $pdo = new PDO(
         sprintf('mysql:host=%s;dbname=%s', $_ENV['DB_HOST'], $_ENV['DB_NAME']),
         $_ENV['DB_USER'],
@@ -31,13 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Adresse email invalide.';
     } elseif (!empty($_FILES['profile_picture']['name'])) {
-        // Gestion de l'upload de l'image
         $target_dir = "uploads/";
         $target_file = $target_dir . basename($_FILES['profile_picture']['name']);
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
         $allowed_types = ['jpg', 'jpeg', 'png'];
 
-        // Vérifiez si le fichier a été correctement téléchargé
         if ($_FILES['profile_picture']['error'] !== UPLOAD_ERR_OK) {
             $error = 'Erreur lors du téléchargement de l\'image. Code d\'erreur : ' . $_FILES['profile_picture']['error'];
         } elseif (!in_array($imageFileType, $allowed_types)) {
@@ -53,13 +49,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($error)) {
         try {
-            // Vérifiez si l'utilisateur ou l'email existe déjà
             $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE name = :name OR email = :email');
             $stmt->execute(['name' => $name, 'email' => $email]);
             if ($stmt->fetchColumn() > 0) {
                 $error = 'Nom ou email déjà utilisé.';
             } else {
-                // Insérez l'utilisateur dans la base de données
                 $stmt = $pdo->prepare('
                     INSERT INTO users (name, email, phone, id_perm, password, ticket_count, open_ticket_count, closed_ticket_count, profile_picture, created_at, updated_at)
                     VALUES (:name, :email, :phone, :id_perm, :password, :ticket_count, :open_ticket_count, :closed_ticket_count, :profile_picture, NOW(), NOW())
@@ -68,15 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'name' => $name,
                     'email' => $email,
                     'phone' => $phone,
-                    'id_perm' => 1, // Par défaut, l'utilisateur a un rôle de base
+                    'id_perm' => 1, 
                     'password' => password_hash($password, PASSWORD_BCRYPT),
                     'ticket_count' => 0,
                     'open_ticket_count' => 0,
                     'closed_ticket_count' => 0,
-                    'profile_picture' => $profile_picture ?: 'uploads/default.png', // Par défaut, une image générique
+                    'profile_picture' => $profile_picture ?: 'uploads/default.png', 
                 ]);
 
-                // Connectez l'utilisateur après l'inscription
                 $_SESSION['logged_in'] = true;
 $_SESSION['user'] = [
     'id' => $userId,
@@ -100,7 +93,6 @@ $_SESSION['user'] = [
     <style>
         body {
             background-color: #1a202c;
-            /* Couleur de fond de l'index */
         }
 
         .form-container {
@@ -112,7 +104,6 @@ $_SESSION['user'] = [
 
         .form-title {
             color: #a5f3fc;
-            /* Couleur cyan clair utilisée dans l'index */
         }
 
         .form-label {
@@ -122,26 +113,20 @@ $_SESSION['user'] = [
 
         .form-input {
             background-color: #2d3748;
-            /* Couleur de fond des champs */
             border-color: rgba(255, 255, 255, 0.1);
-            /* Bordure légère */
             color: #ffffff;
-            /* Texte blanc */
         }
 
         .form-button {
             background-color: #22c55e;
-            /* Vert utilisé dans l'index */
         }
 
         .form-button:hover {
             background-color: #16a34a;
-            /* Vert plus foncé pour le hover */
         }
 
         .form-link {
             color: #6d28d9;
-            /* Violet utilisé dans l'index */
         }
 
         .form-link:hover {

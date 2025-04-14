@@ -67,10 +67,8 @@ $text = $translations[$lang];
 <body>
     <nav class="bg-gray-800 shadow-md">
         <div class="container mx-auto flex justify-between items-center px-4 py-3">
-            <!-- Logo à gauche -->
             <a class="text-white text-xl font-bold uppercase" href="index.php">MyTicket</a>
 
-            <!-- Menu principal au centre -->
             <div class="flex items-center space-x-6">
                 <div class="relative">
                     <button id="ticketsDropdownButton" class="text-white flex items-center space-x-2 hover:text-gray-300 hover-animate-red" onclick="toggleDropdown('ticketsDropdown')">
@@ -109,51 +107,53 @@ $text = $translations[$lang];
 
             <div class="flex items-center space-x-4">
                 <?php if (!empty($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
-                    <button id="profileDropdownButton" onclick="toggleDropdown('profileDropdown')" class="text-white flex items-center space-x-2 hover:text-gray-300">
-                        <i class="fas fa-user-circle text-2xl"></i>
-                        <span><?= htmlspecialchars($_SESSION['user']['name'] ?? 'Profil') ?></span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div id="profileDropdown" class="hidden absolute top-full right-0 bg-gray-700 text-white rounded-lg shadow-lg mt-2 z-20 w-56 overflow-visible">
-                        <div class="flex justify-between items-center px-4 py-2 border-b border-gray-600">
-                            <?php
-                            $roleImages = [
-                                1 => 'utilisateur.png',
-                                2 => 'admin.png',
-                                3 => 'dev.png',
-                                4 => 'modo.png',
-                                5 => 'guide.png',
-                            ];
-                            $roleLabels = [
-                                1 => 'Utilisateur',
-                                2 => 'Admin',
-                                3 => 'Dev',
-                                4 => 'Modo',
-                                5 => 'Guide',
-                            ];
-                            $id_perm = $_SESSION['user']['id_perm'] ?? 1;
-                            ?>
-                            <span><?= $roleLabels[$id_perm] ?? 'Utilisateur' ?></span>
-                            <img src="images_statut/<?= $roleImages[$id_perm] ?? 'utilisateur.png' ?>" alt="statut" class="w-[69px] h-[34px]">
-                        </div>
-                        <a href="profile.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center space-x-2">
-                            <i class="fa-solid fa-user text-blue-400"></i>
-                            <span>Mon Profil</span>
-                        </a>
-                        <a href="view_tickets.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center space-x-2">
-                            <i class="fa-solid fa-ticket text-red-400"></i>
-                            <span>Mes Tickets</span>
-                        </a>
-                        <?php if (in_array($id_perm, [2, 3, 4, 5])): ?>
-                            <a href="admin.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center space-x-2 font-semibold text-green-400">
-                                <i class="fa-solid fa-tools text-green-400"></i>
-                                <span>🛠 Accès Admin</span>
+                    <div class="relative">
+                        <button id="profileDropdownButton" onclick="toggleDropdown('profileDropdown')" class="text-white flex items-center space-x-2 hover:text-gray-300">
+                            <i class="fas fa-user-circle text-2xl"></i>
+                            <span><?= htmlspecialchars($_SESSION['user']['name'] ?? 'Profil') ?></span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="profileDropdown" class="hidden absolute top-full left-1/2 transform -translate-x-1/2 bg-gray-700 text-white rounded-lg shadow-lg mt-2 z-20 w-64 overflow-visible">
+                            <div class="flex justify-between items-center px-4 py-2 border-b border-gray-600">
+                                <?php
+                                $roleImages = [
+                                    1 => 'utilisateur.png',
+                                    2 => 'admin.png',
+                                    3 => 'dev.png',
+                                    4 => 'modo.png',
+                                    5 => 'guide.png',
+                                ];
+                                $roleLabels = [
+                                    1 => 'Utilisateur',
+                                    2 => 'Admin',
+                                    3 => 'Dev',
+                                    4 => 'Modo',
+                                    5 => 'Guide',
+                                ];
+                                $id_perm = $_SESSION['user']['id_perm'] ?? 1;
+                                ?>
+                                <span><?= $roleLabels[$id_perm] ?? 'Utilisateur' ?></span>
+                                <img src="images_statut/<?= $roleImages[$id_perm] ?? 'utilisateur.png' ?>" alt="statut" class="w-[69px] h-[34px]">
+                            </div>
+                            <a href="profile.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center space-x-2">
+                                <i class="fa-solid fa-user text-blue-400"></i>
+                                <span>Mon Profil</span>
                             </a>
-                        <?php endif; ?>
-                        <a href="logout.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center space-x-2 text-red-400">
-                            <i class="fa-solid fa-sign-out-alt text-red-400"></i>
-                            <span>Déconnexion</span>
-                        </a>
+                            <a href="view_tickets.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center space-x-2">
+                                <i class="fa-solid fa-ticket text-red-400"></i>
+                                <span>Mes Tickets</span>
+                            </a>
+                            <?php if (in_array($id_perm, [2, 3, 4, 5])): ?>
+                                <a href="admin.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center space-x-2 font-semibold text-green-400">
+                                    <i class="fa-solid fa-tools text-green-400"></i>
+                                    <span>🛠 Accès Admin</span>
+                                </a>
+                            <?php endif; ?>
+                            <a href="logout.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center space-x-2 text-red-400">
+                                <i class="fa-solid fa-sign-out-alt text-red-400"></i>
+                                <span>Déconnexion</span>
+                            </a>
+                        </div>
                     </div>
                 <?php else: ?>
                     <a href="login.php" class="text-white hover:text-green-400"><?= $text['login'] ?></a>
