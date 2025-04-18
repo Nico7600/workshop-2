@@ -1,60 +1,32 @@
 <?php
 session_start();
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once 'vendor/autoload.php';
-use Dotenv\Dotenv;
-
-$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-// Vérifie que la session contient les infos nécessaires
-if (!isset($_SESSION['user']['id'], $_SESSION['user']['id_perm'])) {
-     error_log("[ERREUR SESSION] L'utilisateur n'est pas connecté ou la session est incomplète.");
-    echo "Vous n'êtes pas connecté.";
-    exit;
-}
+$dsn = 'mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_NAME'] . ';charset=utf8';
+$username = $_ENV['DB_USER'];
+$password = $_ENV['DB_PASSWORD'];
 
 try {
-    // Connexion à la base de données
-    $dsn = sprintf("mysql:host=%s;dbname=%s;charset=utf8", $_ENV['DB_HOST'], $_ENV['DB_NAME']);
-    $db = new PDO($dsn, $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO($dsn, $username, $password, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
 } catch (PDOException $e) {
-    error_log("[ERREUR DB] Connexion échouée : " . $e->getMessage());
-    echo "Erreur de connexion à la base de données. Veuillez réessayer plus tard.";
-    exit;
+    die('Database connection failed: ' . $e->getMessage());
 }
 
-try {
-    $userId = $_SESSION['user']['id'];
-    $query = $db->prepare("SELECT id_perm FROM users WHERE id = ?");
-    $query->execute([$userId]);
-    $user = $query->fetch(PDO::FETCH_ASSOC);
+if (!isset($_SESSION['user'])) {
+    header('Location: index.php');
+    exit();
+}
 
-    if (!$user) {
-        error_log("[ERREUR UTILISATEUR] Aucun utilisateur trouvé avec l'ID : $userId");
-        echo "Accès refusé. Utilisateur introuvable.";
-        exit;
-    }
-
-    $permission = (int)$user['id_perm'];
-    error_log("[DEBUG] Permission utilisateur récupérée : $permission");
-
-    // Autorise uniquement certaines permissions
-    $permissionsAutorisees = [2, 3, 4, 5];
-    if (!in_array($permission, $permissionsAutorisees, true)) {
-        error_log("[ERREUR PERMISSION] ID $userId a une permission non autorisée : $permission");
-        echo "Accès refusé. Vous n'avez pas les droits suffisants.";
-        exit;
-    }
-} catch (PDOException $e) {
-    error_log("[ERREUR DB] Erreur lors de la récupération de la permission : " . $e->getMessage());
-    echo "Erreur lors de la vérification des permissions.";
-    exit;
+$id_perm = (int)$_SESSION['user']['id_perm'];
+if (!in_array($id_perm, [2, 3, 4, 5])) {
+    header('Location: index.php');
+    exit();
 }
 
 $languages = ['en' => 'English', 'fr' => 'Français', 'nl' => 'Nederlands'];
@@ -62,49 +34,111 @@ $selected_lang = $_GET['lang'] ?? 'fr';
 if (!array_key_exists($selected_lang, $languages)) {
     $selected_lang = 'fr';
 }
-?>
 
+$translations = [
+    'fr' => [
+        'welcome' => 'Bienvenue, Administrateur',
+        'navigate' => 'Utilisez le menu ci-dessus pour naviguer entre les différentes sections.',
+        'dashboard' => 'Tableau de bord',
+        'users' => 'Gestion des utilisateurs',
+        'settings' => 'Paramètres',
+    ],
+    'en' => [
+        'welcome' => 'Welcome, Administrator',
+        'navigate' => 'Use the menu above to navigate between different sections.',
+        'dashboard' => 'Dashboard',
+        'users' => 'User Management',
+        'settings' => 'Settings',
+    ],
+    'nl' => [
+        'welcome' => 'Welkom, Beheerder',
+        'navigate' => 'Gebruik het menu hierboven om tussen de verschillende secties te navigeren.',
+        'dashboard' => 'Dashboard',
+        'users' => 'Gebruikersbeheer',
+        'settings' => 'Instellingen',
+    ],
+];
+
+$trans = $translations[$selected_lang];
+?>
 <!DOCTYPE html>
-<html lang="<?php echo htmlspecialchars($selected_lang); ?>">
+<html lang="<?= htmlspecialchars($selected_lang) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body class="bg-gray-100 text-gray-800">
-    <div class="container mx-auto p-4">
-        <header class="flex justify-between items-center bg-blue-500 text-white p-4 rounded">
-            <h1 class="text-xl font-bold">Admin Panel</h1>
-            <div class="flex items-center space-x-4">
-                <form method="GET" class="flex items-center">
-                    <label for="lang" class="text-sm mr-2">Language:</label>
-                    <select name="lang" id="lang" class="text-sm bg-white border rounded px-2 py-1" onchange="this.form.submit()">
-                        <?php foreach ($languages as $lang_code => $lang_name): ?>
-                            <option value="<?php echo $lang_code; ?>" <?php echo $lang_code === $selected_lang ? 'selected' : ''; ?>>
-                                <?php echo $lang_name; ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </form>
-                <a href="logout.php" class="text-sm bg-red-500 px-3 py-1 rounded hover:bg-red-600">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
-            </div>
-        </header>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --purple-dark: #4c1d95;
+            --red: #ef4444;
+            --green: #22c55e;
+            --purple: #6d28d9;
+            --cyan-light: #a5f3fc;
+            --gray-light: #e5e5e5;
+            --hover-green: #22c55e;
+            --white: #ffffff;
+        }
 
-        <main class="mt-6">
-            <div class="bg-white shadow rounded p-6">
-                <h2 class="text-2xl font-semibold mb-4">Welcome, Admin</h2>
-                <p class="text-gray-600">Here you can manage the application.</p>
-                <div class="mt-4">
-                    <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                        <i class="fas fa-plus"></i> Add New Item
-                    </button>
+        body {
+            background-color: #1a202c;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            color: var(--cyan-light);
+        }
+
+        .section-container {
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .text-gray-light {
+            color: var(--gray-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col">
+        <?php include 'header.php'; ?>
+        <main class="flex-grow container mx-auto py-8">
+            <div class="section-container">
+                <h2 class="section-title"><?= htmlspecialchars($trans['welcome']) ?></h2>
+                <p class="text-gray-light"><?= htmlspecialchars($trans['navigate']) ?></p>
+                <div class="mt-6">
+                    <a href="dashboard.php" class="card bg-purple text-white px-4 py-2 rounded hover:bg-purple-dark">
+                        <i class="fas fa-tachometer-alt"></i> <?= htmlspecialchars($trans['dashboard']) ?>
+                    </a>
+                    <a href="users.php" class="card bg-green text-white px-4 py-2 rounded hover:bg-hover-green ml-2">
+                        <i class="fas fa-users"></i> <?= htmlspecialchars($trans['users']) ?>
+                    </a>
+                    <a href="settings.php" class="card bg-red text-white px-4 py-2 rounded hover:bg-purple ml-2">
+                        <i class="fas fa-tools"></i> <?= htmlspecialchars($trans['settings']) ?>
+                    </a>
                 </div>
             </div>
         </main>
+        <?php include 'footer.php'; ?>
     </div>
 </body>
 </html>

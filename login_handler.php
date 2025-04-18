@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->fetch();
 
         if ($hashedPassword && password_verify($password, $hashedPassword)) {
+            // Connexion automatique si les identifiants sont corrects
             $_SESSION['user'] = [
                 'id'    => $userId,
                 'name'  => $userName,

@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $availableLangs = ['fr', 'en', 'nl'];
 
@@ -17,7 +19,7 @@ $translations = [
     'fr' => [
         'tickets' => 'Tickets',
         'create_ticket' => 'Créer un ticket',
-        'view_tickets' => 'Voir mes tickets',
+        'ticket_view' => 'Voir mes tickets',
         'archive_ticket' => 'Tickets archivés',
         'support' => 'Support',
         'about_us' => 'Qui sommes-nous',
@@ -30,7 +32,7 @@ $translations = [
     'en' => [
         'tickets' => 'Tickets',
         'create_ticket' => 'Create a ticket',
-        'view_tickets' => 'View my tickets',
+        'ticket_view' => 'View my tickets',
         'archive_ticket' => 'Archived tickets',
         'support' => 'Support',
         'about_us' => 'About us',
@@ -43,7 +45,7 @@ $translations = [
     'nl' => [
         'tickets' => 'Kaartjes',
         'create_ticket' => 'Maak een ticket',
-        'view_tickets' => 'Bekijk mijn tickets',
+        'ticket_view' => 'Bekijk mijn tickets',
         'archive_ticket' => 'Gearchiveerde tickets',
         'support' => 'Ondersteuning',
         'about_us' => 'Over ons',
@@ -83,7 +85,7 @@ $text = $translations[$lang];
                         </a>
                         <a href="view_tickets.php" class="block px-6 py-3 hover:bg-gray-600 transition-colors flex items-center space-x-2 group">
                             <i class="fas fa-list text-blue-300 group-hover:scale-110 group-hover:rotate-6 transition-transform"></i>
-                            <span class="group-hover:text-blue-300 transition-colors"><?= $text['view_tickets'] ?></span>
+                            <span class="group-hover:text-blue-300 transition-colors"><?= $text['ticket_view'] ?></span>
                         </a>
                         <a href="archive_tickets.php" class="block px-6 py-3 hover:bg-gray-600 rounded-b-lg transition-colors flex items-center space-x-2 group">
                             <i class="fas fa-archive text-red-500 group-hover:scale-110 group-hover:rotate-6 transition-transform"></i>
@@ -146,7 +148,7 @@ $text = $translations[$lang];
                             <?php if (in_array($id_perm, [2, 3, 4, 5])): ?>
                                 <a href="admin.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center space-x-2 font-semibold text-green-400">
                                     <i class="fa-solid fa-tools text-green-400"></i>
-                                    <span>🛠 Accès Admin</span>
+                                    <span> Accès Admin</span>
                                 </a>
                             <?php endif; ?>
                             <a href="logout.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center space-x-2 text-red-400">

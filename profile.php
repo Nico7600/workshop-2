@@ -16,12 +16,15 @@ try {
     die('Erreur de connexion à la base de données : ' . $e->getMessage());
 }
 
+// Vérification de la connexion à la base de données
 if (!$pdo) {
     die('Impossible de se connecter à la base de données.');
 }
 
+// Inclusion du header
 include 'header.php';
 
+// Récupération des informations de l'utilisateur connecté
 $currentUser = null;
 if (isset($_SESSION['user_id'])) {
     try {
@@ -33,6 +36,7 @@ if (isset($_SESSION['user_id'])) {
     }
 }
 
+// Récupération du nom d'utilisateur et du mot de passe de l'utilisateur connecté
 $userCredentials = null;
 if (isset($_SESSION['user_id'])) {
     try {
