@@ -73,6 +73,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if (empty($title) || empty($message)) {
         $_SESSION["error_message"] = $text_ui['missing_fields'];
+    } elseif (strlen($title) > 20) {
+        $_SESSION["error_message"] = "Le titre ne doit pas dépasser 20 caractères.";
     } else {
         // Insérer un nouveau ticket
         $stmtTicket = $db->prepare("INSERT INTO ticket (creator, ticket_name, message, created_at) VALUES (:creator, :ticket_name, :message, NOW())");
@@ -82,6 +84,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($stmtTicket->execute()) {
             $ticketId = $db->lastInsertId();
+
+            $stmtUpdateUser = $db->prepare("UPDATE users SET ticket_count = ticket_count + 1, open_ticket_count = open_ticket_count + 1 WHERE id = :userId");
+            $stmtUpdateUser->bindParam(":userId", $userId, PDO::PARAM_INT);
+            $stmtUpdateUser->execute();
 
             $_SESSION["success_message"] = $text_ui['success_message'];
             header("Location: view_tickets.php?id=" . $ticketId);
@@ -142,7 +148,9 @@ include 'header.php';
                 <label for="ticket_name" class="block text-lg font-medium mb-2">
                     <i class="fas fa-heading"></i> <?= $text_ui['title'] ?>
                 </label>
-                <input type="text" id="ticket_name" name="ticket_name" class="w-full border border-gray-700 rounded-lg px-4 py-2 bg-gray-700 text-white focus:ring-2 focus:ring-blue-500" required>
+                <input type="text" id="ticket_name" name="ticket_name" maxlength="20" 
+                       class="w-full border border-gray-700 rounded-lg px-4 py-2 bg-gray-700 text-white focus:ring-2 focus:ring-blue-500" 
+                       oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20);" required>
             </div>
             <div class="mb-6 fade-in">
                 <label for="message" class="block text-lg font-medium mb-2">

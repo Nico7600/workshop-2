@@ -1,6 +1,11 @@
 <?php
 $lang = $_GET['lang'] ?? 'fr';
 
+$valid_languages = ['fr', 'en', 'nl'];
+if (!in_array($lang, $valid_languages)) {
+    $lang = 'fr';
+}
+
 $translations = [
     'fr' => [
         'copyright' => 'Tous droits réservés',
