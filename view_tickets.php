@@ -13,7 +13,8 @@ error_reporting(E_ALL);
 $lang = $_GET['lang'] ?? ($_COOKIE['lang'] ?? 'fr');
 $available_languages = ['en', 'nl', 'fr'];
 if (!in_array($lang, $available_languages)) {
-    $lang = 'fr';}
+    $lang = 'fr';
+}
 
 $translations = [
     'fr' => [
@@ -28,6 +29,9 @@ $translations = [
         ],
         'open' => 'Ouvrir',
         'archive' => 'Archiver',
+        'confirm_archive' => 'Êtes-vous sûr de vouloir archiver ce ticket ?',
+        'yes' => 'Oui',
+        'no' => 'Non',
     ],
     'en' => [
         'my_tickets' => 'My Tickets',
@@ -41,6 +45,9 @@ $translations = [
         ],
         'open' => 'Open',
         'archive' => 'Archive',
+        'confirm_archive' => 'Are you sure you want to archive this ticket?',
+        'yes' => 'Yes',
+        'no' => 'No',
     ],
     'nl' => [
         'my_tickets' => 'Mijn Tickets',
@@ -54,6 +61,9 @@ $translations = [
         ],
         'open' => 'Openen',
         'archive' => 'Archiveren',
+        'confirm_archive' => 'Weet u zeker dat u dit ticket wilt archiveren?',
+        'yes' => 'Ja',
+        'no' => 'Nee',
     ],
 ];
 
@@ -175,24 +185,56 @@ include 'header.php';
             <?php endif; ?>
         </p>
     </div>
+    <div id="archive-confirmation" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 shadow-lg text-center">
+            <p class="text-xl text-gray-100 mb-4">
+                <i class="fas fa-exclamation-circle text-red-500"></i> <?= $text_ui['confirm_archive'] ?>
+            </p>
+            <div class="flex justify-center space-x-4">
+                <button id="confirm-yes" 
+                        class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                    <i class="fas fa-check"></i> <?= $text_ui['yes'] ?>
+                </button>
+                <button id="confirm-no" 
+                        class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                    <i class="fas fa-times"></i> <?= $text_ui['no'] ?>
+                </button>
+            </div>
+        </div>
+    </div>
     <script>
+        let ticketToArchive = null;
+
         function confirmArchive(ticketId) {
-            if (confirm("Êtes-vous sûr de vouloir archiver ce ticket ?")) {
-                fetch(`archive_ticket.php?id=${ticketId}`, { method: 'POST' })
+            ticketToArchive = ticketId;
+            document.getElementById('archive-confirmation').classList.remove('hidden');
+        }
+
+        document.getElementById('confirm-yes').addEventListener('click', () => {
+            if (ticketToArchive) {
+                fetch(`archive_tickets.php?id=${ticketToArchive}`, { method: 'POST' })
                     .then(response => {
                         if (response.ok) {
                             alert("Le ticket a été archivé avec succès.");
                             location.reload();
                         } else {
-                            alert("Une erreur s'est produite lors de l'archivage du ticket.");
+                            return response.text().then(text => {
+                                alert(`Erreur: ${text}`);
+                            });
                         }
                     })
                     .catch(error => {
                         console.error("Erreur:", error);
-                        alert("Une erreur s'est produite.");
+                        alert("Une erreur réseau s'est produite.");
                     });
             }
-        }
+            document.getElementById('archive-confirmation').classList.add('hidden');
+        });
+
+        document.getElementById('confirm-no').addEventListener('click', () => {
+            ticketToArchive = null;
+            document.getElementById('archive-confirmation').classList.add('hidden');
+        });
     </script>
     <?php include 'footer.php'; ?>
 </body>
