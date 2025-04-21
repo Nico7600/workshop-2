@@ -58,14 +58,12 @@ $translations = [
     ],
 ];
 
-// Vérification de la connexion
 if (!isset($_SESSION['user']['id'])) {
     header("Location: login.php");
     exit;
 }
 $text_ui = $translations[$lang];
 
-// Traitement du formulaire
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $title   = trim($_POST["ticket_name"]);
     $message = trim($_POST["message"]);
@@ -76,7 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } elseif (strlen($title) > 20) {
         $_SESSION["error_message"] = "Le titre ne doit pas dépasser 20 caractères.";
     } else {
-        // Insérer un nouveau ticket
         $stmtTicket = $db->prepare("INSERT INTO ticket (creator, ticket_name, message, created_at) VALUES (:creator, :ticket_name, :message, NOW())");
         $stmtTicket->bindParam(":creator", $userId, PDO::PARAM_INT);
         $stmtTicket->bindParam(":ticket_name", $title);

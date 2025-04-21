@@ -28,6 +28,7 @@ $translations = [
         'connect' => 'Connecter',
         'login' => 'Se connecter',
         'register' => 'S\'inscrire',
+        'profil' => 'Profil',
     ],
     'en' => [
         'tickets' => 'Tickets',
@@ -41,6 +42,7 @@ $translations = [
         'connect' => 'Connect',
         'login' => 'Login',
         'register' => 'Register',
+        'profil' => 'Profile',
     ],
     'nl' => [
         'tickets' => 'Kaartjes',
@@ -54,6 +56,7 @@ $translations = [
         'connect' => 'Verbinden',
         'login' => 'Inloggen',
         'register' => 'Registreren',
+        'profil' => 'Profiel',
     ],
 ];
 $text = $translations[$lang];
@@ -140,7 +143,7 @@ $text = $translations[$lang];
                             </div>
                             <a href="profile.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center space-x-2">
                                 <i class="fa-solid fa-user text-blue-400"></i>
-                                <span><?= $text['connect'] ?></span>
+                                <span><?= $text['profil'] ?></span>
                             </a>
                             <a href="view_tickets.php" class="block px-4 py-2 hover:bg-gray-600 flex items-center space-x-2">
                                 <i class="fa-solid fa-ticket text-red-400"></i>
