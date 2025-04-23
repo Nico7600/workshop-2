@@ -100,7 +100,8 @@ if (isset($_SESSION['user']['id'])) {
                 profile_picture, 
                 ticket_count, 
                 open_ticket_count, 
-                closed_ticket_count
+                closed_ticket_count,
+                role_image
             FROM users
             WHERE id = :id
         ');
@@ -285,8 +286,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                     <label for="profile_picture" class="block text-sm font-medium text-gray-300"><?php echo htmlspecialchars($t['profile_picture']); ?></label>
                     <?php if (!empty($currentUser['profile_picture'])): ?>
                         <img src="<?php echo htmlspecialchars($currentUser['profile_picture']); ?>" alt="<?php echo htmlspecialchars($t['profile_picture']); ?>" class="w-20 h-20 rounded-full mb-4">
+                        <?php // Debug: Affiche le chemin généré pour la photo de profil
+                        echo "Chemin photo de profil : " . htmlspecialchars($currentUser['profile_picture']); ?>
                     <?php endif; ?>
                     <input type="file" name="profile_picture" id="profile_picture" class="form-input mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                </div>
+                <div>
+                    <?php if (!empty($currentUser['role_image'])): ?>
+                        <img src="images_statut/<?php echo htmlspecialchars($currentUser['role_image']); ?>" alt="Role Image" class="w-10 h-10">
+                        <?php // Debug: Affiche le chemin généré pour l'image de rôle
+                        echo "Chemin image de rôle : images_statut/" . htmlspecialchars($currentUser['role_image']); ?>
+                    <?php endif; ?>
                 </div>
                 <div>
                     <label for="current_password" class="block text-sm font-medium text-gray-300"><?php echo htmlspecialchars($t['current_password']); ?></label>

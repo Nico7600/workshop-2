@@ -76,17 +76,27 @@ if (!isset($_SESSION['user']['id'])) {
 
 $userId = $_SESSION['user']['id'];
 
+$isAdmin = $_SESSION['user']['is_admin'] ?? false;
+
 $itemsPerPage = 8; 
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $itemsPerPage;
 
-$stmt = $db->prepare("SELECT COUNT(*) FROM ticket WHERE creator = :creator AND is_close = 0");
-$stmt->bindParam(":creator", $userId, PDO::PARAM_INT);
+if ($isAdmin) {
+    $stmt = $db->prepare("SELECT COUNT(*) FROM ticket WHERE is_close = 0");
+} else {
+    $stmt = $db->prepare("SELECT COUNT(*) FROM ticket WHERE creator = :creator AND is_close = 0");
+    $stmt->bindParam(":creator", $userId, PDO::PARAM_INT);
+}
 $stmt->execute();
 $totalTickets = $stmt->fetchColumn();
 
-$stmt = $db->prepare("SELECT id, ticket_name, message, created_at FROM ticket WHERE creator = :creator AND is_close = 0 ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
-$stmt->bindParam(":creator", $userId, PDO::PARAM_INT);
+if ($isAdmin) {
+    $stmt = $db->prepare("SELECT id, ticket_name, message, created_at FROM ticket WHERE is_close = 0 ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
+} else {
+    $stmt = $db->prepare("SELECT id, ticket_name, message, created_at FROM ticket WHERE creator = :creator AND is_close = 0 ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
+    $stmt->bindParam(":creator", $userId, PDO::PARAM_INT);
+}
 $stmt->bindValue(":limit", $itemsPerPage, PDO::PARAM_INT);
 $stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
 $stmt->execute();
