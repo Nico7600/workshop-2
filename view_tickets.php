@@ -75,10 +75,9 @@ if (!isset($_SESSION['user']['id'])) {
 }
 
 $userId = $_SESSION['user']['id'];
-
 $isAdmin = $_SESSION['user']['is_admin'] ?? false;
 
-$itemsPerPage = 8; 
+$itemsPerPage = 8;
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $itemsPerPage;
 
@@ -104,7 +103,6 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 include 'header.php';
 ?>
-
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
 <head>
@@ -119,7 +117,7 @@ include 'header.php';
             font-family: 'Orbitron', sans-serif;
         }
         .scrollable-container {
-            max-height: calc(100vh - 100px); 
+            max-height: calc(100vh - 100px);
             overflow-y: auto;
         }
         .ticket-container {
@@ -127,22 +125,63 @@ include 'header.php';
             display: flex;
             flex-direction: column;
             justify-content: center;
-            position: relative; 
+            position: relative;
         }
         .ticket-container h2 {
             font-size: 1.5rem;
-            position: relative; 
+            position: relative;
             text-align: left;
-            margin: 0; 
+            margin: 0;
         }
         .tickets-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 1.5rem; 
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        #loading-screen .spinner {
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            border-top: 6px solid #00ff00;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 0.8s linear infinite; 
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
 <body class="flex flex-col min-h-screen bg-gray-900 text-gray-100 font-orbitron">
+    <div id="loading-screen">
+        <div class="spinner"></div>
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        });
+    </script>
     <div class="container mx-auto flex-grow p-6 font-orbitron h-full">
         <h1 class="text-3xl font-bold text-center mb-6"><?= $text_ui['my_tickets'] ?></h1>
         <div class="scrollable-container">
@@ -159,12 +198,10 @@ include 'header.php';
                                 <?= $text_ui['created_at'] ?>: <?= date('d/m/Y à H:i:s', strtotime($ticket['created_at'])) ?>
                             </p>
                             <div class="absolute inset-y-0 right-4 flex items-center space-x-4">
-                                <a href="open_ticket.php?id=<?= urlencode($ticket['id']) ?>" 
-                                   class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                <a href="open_ticket.php?id=<?= urlencode($ticket['id']) ?>" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                                     <i class="fas fa-folder-open"></i> <?= $text_ui['open'] ?>
                                 </a>
-                                <button onclick="confirmArchive(<?= htmlspecialchars($ticket['id']) ?>)" 
-                                        class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                                <button onclick="confirmArchive(<?= htmlspecialchars($ticket['id']) ?>)" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
                                     <i class="fas fa-archive"></i> <?= $text_ui['archive'] ?>
                                 </button>
                             </div>
@@ -175,14 +212,12 @@ include 'header.php';
         </div>
         <div class="flex justify-center mt-6">
             <?php if ($page > 1): ?>
-                <a href="?page=<?= $page - 1 ?>&lang=<?= $lang ?>" 
-                   class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <a href="?page=<?= $page - 1 ?>&lang=<?= $lang ?>" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     Précédent
                 </a>
             <?php endif; ?>
             <?php if ($page * $itemsPerPage < $totalTickets): ?>
-                <a href="?page=<?= $page + 1 ?>&lang=<?= $lang ?>" 
-                   class="ml-4 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <a href="?page=<?= $page + 1 ?>&lang=<?= $lang ?>" class="ml-4 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     Suivant
                 </a>
             <?php endif; ?>
@@ -201,12 +236,10 @@ include 'header.php';
                 <i class="fas fa-exclamation-circle text-red-500"></i> <?= $text_ui['confirm_archive'] ?>
             </p>
             <div class="flex justify-center space-x-4">
-                <button id="confirm-yes" 
-                        class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                <button id="confirm-yes" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                     <i class="fas fa-check"></i> <?= $text_ui['yes'] ?>
                 </button>
-                <button id="confirm-no" 
-                        class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                <button id="confirm-no" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-6 py-3 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
                     <i class="fas fa-times"></i> <?= $text_ui['no'] ?>
                 </button>
             </div>
@@ -222,21 +255,23 @@ include 'header.php';
 
         document.getElementById('confirm-yes').addEventListener('click', () => {
             if (ticketToArchive) {
-                fetch(`archive_tickets.php?id=${ticketToArchive}`, { method: 'POST' })
-                    .then(response => {
-                        if (response.ok) {
-                            alert("Le ticket a été archivé avec succès.");
-                            location.reload();
-                        } else {
-                            return response.text().then(text => {
-                                alert(`Erreur: ${text}`);
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Erreur:", error);
-                        alert("Une erreur réseau s'est produite.");
-                    });
+                fetch('archive_tickets.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: ticketToArchive, userId: <?= $userId ?> })
+                }).then(response => {
+                    if (response.ok) {
+                        alert("Le ticket a été archivé avec succès.");
+                        location.reload();
+                    } else {
+                        return response.text().then(text => {
+                            alert("Erreur: " + text);
+                        });
+                    }
+                }).catch(error => {
+                    console.error("Erreur:", error);
+                    alert("Une erreur réseau s'est produite.");
+                });
             }
             document.getElementById('archive-confirmation').classList.add('hidden');
         });
