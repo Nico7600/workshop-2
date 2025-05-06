@@ -487,6 +487,56 @@ $trans = $translations[$selected_lang];
             padding: 0.5rem;
             width: 100%;
         }
+
+        /* Ajout de styles pour rendre les tableaux responsives */
+        @media (max-width: 768px) {
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            th, td {
+                font-size: 0.875rem; /* Réduction de la taille de la police */
+                padding: 0.5rem; /* Réduction de l'espacement */
+            }
+
+            .table-container {
+                margin-bottom: 1rem; /* Ajustement de l'espacement */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-container {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .card {
+                background-color: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 10px;
+                padding: 1rem;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            }
+
+            .card h3 {
+                font-size: 1rem;
+                color: var(--cyan-light);
+                margin-bottom: 0.5rem;
+            }
+
+            .card p {
+                font-size: 0.875rem;
+                margin: 0.25rem 0;
+            }
+
+            button {
+                font-size: 0.75rem; /* Réduction de la taille des boutons */
+                padding: 0.25rem 0.5rem; /* Ajustement de l'espacement des boutons */
+            }
+        }
     </style>
     <script>
         // JavaScript to handle modal display
@@ -606,68 +656,23 @@ $trans = $translations[$selected_lang];
                         $stmt = $pdo->query("SELECT * FROM users");
                         if ($stmt->rowCount() > 0) {
                             while ($row = $stmt->fetch()) {
-                                $isBanned = $row['is_banned'] ?? false; // Assume `is_banned` column exists
-                                $banDuration = $row['ban_duration'] ?? null; // Assume `ban_duration` column exists
-
+                                // Affichage en mode tableau
                                 echo "<tr>";
                                 foreach (array_keys($columns) as $column) {
                                     if ($column === 'actions') {
                                         echo "<td class='border px-4 py-2 text-center'>
-                                                <button id='banButton-{$row['id']}' onclick=\"openModal('banModal-{$row['id']}')\" class='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'>Ban</button>
-                                                <button id='roleButton-{$row['id']}' onclick=\"openModal('roleModal-{$row['id']}')\" class='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600'>Role</button>
-                                                <button id='profileButton-{$row['id']}' onclick=\"openModal('profileModal-{$row['id']}')\" class='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'>Profile</button>
+                                                <button id='banButton-{$row['id']}' onclick=\"openModal('banModal-{$row['id']}')\" class='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'>
+                                                    <i class=\"fas fa-ban\"></i> Ban
+                                                </button>
+                                                <button id='roleButton-{$row['id']}' onclick=\"openModal('roleModal-{$row['id']}')\" class='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600'>
+                                                    <i class=\"fas fa-user-cog\"></i> Role
+                                                </button>
                                               </td>";
                                     } else {
                                         echo "<td class='border px-4 py-2'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
                                     }
                                 }
                                 echo "</tr>";
-
-                                // Ban Modal
-                                echo "<div id='banModal-{$row['id']}' class='modal'>
-                                        <div class='modal-content'>
-                                            <h3>{$trans['ban_user_modal_title']}: {$row['name']}</h3>
-                                            <p>{$trans['ban_user_modal_select_duration']}</p>
-                                            <form onsubmit=\"event.preventDefault(); banUser({$row['id']}, this.duration.value, this.reason.value);\">
-                                                <div class='mb-4'>
-                                                    <label for='reason' class='block text-gray-700'>{$trans['ban_user_modal_reason']}</label>
-                                                    <textarea name='reason' id='reason' rows='3' class='w-full border rounded px-2 py-1' required></textarea>
-                                                </div>
-                                                <div class='mb-4'>
-                                                    <button type='button' onclick=\"banUser({$row['id']}, '1d', document.getElementById('reason').value)\" class='px-4 py-2 bg-red-500 text-white rounded'>1 Day</button>
-                                                    <button type='button' onclick=\"banUser({$row['id']}, '3d', document.getElementById('reason').value)\" class='px-4 py-2 bg-red-500 text-white rounded'>3 Days</button>
-                                                    <button type='button' onclick=\"banUser({$row['id']}, '5d', document.getElementById('reason').value)\" class='px-4 py-2 bg-red-500 text-white rounded'>5 Days</button>
-                                                    <button type='button' onclick=\"banUser({$row['id']}, '7d', document.getElementById('reason').value)\" class='px-4 py-2 bg-red-500 text-white rounded'>7 Days</button>
-                                                    <button type='button' onclick=\"banUser({$row['id']}, '30d', document.getElementById('reason').value)\" class='px-4 py-2 bg-red-500 text-white rounded'>30 Days</button>
-                                                    <button type='button' onclick=\"banUser({$row['id']}, '180d', document.getElementById('reason').value)\" class='px-4 py-2 bg-red-500 text-white rounded'>180 Days</button>
-                                                    <button type='button' onclick=\"banUser({$row['id']}, '365d', document.getElementById('reason').value)\" class='px-4 py-2 bg-red-500 text-white rounded'>365 Days</button>
-                                                    <button type='button' onclick=\"banUser({$row['id']}, 'permanent', document.getElementById('reason').value)\" class='px-4 py-2 bg-red-500 text-white rounded'>{$trans['ban_user_modal_permanent']}</button>
-                                                </div>
-                                            </form>
-                                            <button onclick=\"closeModal('banModal-{$row['id']}')\" class='px-4 py-2 bg-gray-500 text-white rounded'>{$trans['ban_user_modal_cancel']}</button>
-                                        </div>
-                                      </div>";
-
-                                // Role Modal
-                                echo "<div id='roleModal-{$row['id']}' class='modal'>
-                                        <div class='modal-content'>
-                                            <h3>{$trans['manage_role_modal_title']}: {$row['name']}</h3>
-                                            <p>Select a new role:</p>
-                                            <form onsubmit=\"event.preventDefault(); updateRole({$row['id']}, this.role.value);\">
-                                                <div class='mb-4'>
-                                                    <select name='role' class='w-full border rounded px-2 py-1'>
-                                                        <option value='1'" . ($row['id_perm'] == 1 ? " selected" : "") . ">Utilisateur</option>
-                                                        <option value='2'" . ($row['id_perm'] == 2 ? " selected" : "") . ">Admin</option>
-                                                        <option value='3'" . ($row['id_perm'] == 3 ? " selected" : "") . ">Dev</option>
-                                                        <option value='4'" . ($row['id_perm'] == 4 ? " selected" : "") . ">Modo</option>
-                                                        <option value='5'" . ($row['id_perm'] == 5 ? " selected" : "") . ">Guide</option>
-                                                    </select>
-                                                </div>
-                                                <button type='submit' class='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600'>Update Role</button>
-                                            </form>
-                                            <button onclick=\"closeModal('roleModal-{$row['id']}')\" class='px-4 py-2 bg-gray-500 text-white rounded'>{$trans['manage_role_modal_close']}</button>
-                                        </div>
-                                      </div>";
                             }
                         } else {
                             echo "<tr><td colspan='" . count($columns) . "' class='text-center border px-4 py-2'>{$trans['no_records_found']}</td></tr>";
