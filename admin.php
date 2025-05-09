@@ -70,13 +70,14 @@ $translations = [
             'id' => 'ID',
             'creator' => 'Créateur',
             'ticket_name' => 'Nom du ticket',
-            'message' => 'Bericht',
+            'message' => 'Message',
             'created_at' => 'Créé le',
             'is_closed' => 'Statut',
             'closed_at' => 'Fermé le',
             'closed_by' => 'Fermé par',
             'updated_at' => 'Mis à jour le',
             'deleted_at' => 'Supprimé le',
+            'status' => 'Statut',
         ],
         'yes' => 'Oui',
         'no' => 'Non',
@@ -114,6 +115,7 @@ $translations = [
         'open_tickets' => 'Tickets ouverts',
         'closed_tickets' => 'Tickets fermés',
         'ban_user' => 'Bannir l\'utilisateur',
+        'unban_user' => 'Débannir l\'utilisateur',
         'manage_role' => 'Gérer le rôle',
         'view_profile' => 'Voir le profil',
         'ban_user_modal_title' => 'Bannir l\'utilisateur',
@@ -125,6 +127,20 @@ $translations = [
         'manage_role_modal_close' => 'Fermer',
         'view_profile_modal_title' => 'Voir le profil',
         'view_profile_modal_close' => 'Fermer',
+        'view_message' => 'Voir le message',
+        'ban_duration' => 'Durée du bannissement',
+        'ban_reason' => 'Motif du bannissement',
+        'expires_at' => 'Expire le',
+        'view_details' => 'Voir les détails',
+        'confirm' => 'Confirmer',
+        'cancel' => 'Annuler',
+        'edit' => 'Éditer',
+        'save' => 'Enregistrer',
+        'close' => 'Fermer',
+        'view_user' => 'Voir l\'utilisateur',
+        'view' => 'Voir',
+        'ban' => 'Bannir',
+        'role' => 'Rôle',
     ],
     'en' => [
         'user_info' => 'User Information',
@@ -167,6 +183,7 @@ $translations = [
             'closed_by' => 'Closed By',
             'updated_at' => 'Updated At',
             'deleted_at' => 'Deleted At',
+            'status' => 'Status',
         ],
         'yes' => 'Yes',
         'no' => 'No',
@@ -204,6 +221,7 @@ $translations = [
         'open_tickets' => 'Open Tickets',
         'closed_tickets' => 'Closed Tickets',
         'ban_user' => 'Ban User',
+        'unban_user' => 'Unban User',
         'manage_role' => 'Manage Role',
         'view_profile' => 'View Profile',
         'ban_user_modal_title' => 'Ban User',
@@ -215,6 +233,20 @@ $translations = [
         'manage_role_modal_close' => 'Close',
         'view_profile_modal_title' => 'View Profile',
         'view_profile_modal_close' => 'Close',
+        'view_message' => 'View Message',
+        'ban_duration' => 'Ban Duration',
+        'ban_reason' => 'Ban Reason',
+        'expires_at' => 'Expires At',
+        'view_details' => 'View Details',
+        'confirm' => 'Confirm',
+        'cancel' => 'Cancel',
+        'edit' => 'Edit',
+        'save' => 'Save',
+        'close' => 'Close',
+        'view_user' => 'View User',
+        'view' => 'View',
+        'ban' => 'Ban',
+        'role' => 'Role',
     ],
     'nl' => [
         'user_info' => 'Gebruikersinformatie',
@@ -257,6 +289,7 @@ $translations = [
             'closed_by' => 'Gesloten door',
             'updated_at' => 'Bijgewerkt op',
             'deleted_at' => 'Verwijderd op',
+            'status' => 'Status',
         ],
         'yes' => 'Ja',
         'no' => 'Nee',
@@ -294,6 +327,7 @@ $translations = [
         'open_tickets' => 'Open Tickets',
         'closed_tickets' => 'Gesloten Tickets',
         'ban_user' => 'Gebruiker verbannen',
+        'unban_user' => 'Gebruiker deblokkeren',
         'manage_role' => 'Rol beheren',
         'view_profile' => 'Profiel bekijken',
         'ban_user_modal_title' => 'Gebruiker verbannen',
@@ -305,6 +339,20 @@ $translations = [
         'manage_role_modal_close' => 'Sluiten',
         'view_profile_modal_title' => 'Profiel bekijken',
         'view_profile_modal_close' => 'Sluiten',
+        'view_message' => 'Bericht bekijken',
+        'ban_duration' => 'Duur van verbanning',
+        'ban_reason' => 'Reden van verbanning',
+        'expires_at' => 'Verloopt op',
+        'view_details' => 'Bekijk details',
+        'confirm' => 'Bevestigen',
+        'cancel' => 'Annuleren',
+        'edit' => 'Bewerken',
+        'save' => 'Opslaan',
+        'close' => 'Sluiten',
+        'view_user' => 'Gebruiker bekijken',
+        'view' => 'Bekijken',
+        'ban' => 'Verbannen',
+        'role' => 'Rol',
     ],
 ];
 
@@ -354,77 +402,6 @@ $trans = $translations[$selected_lang];
             max-width: 1200px;
             margin: 0 auto;
             padding: 1rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        th, td {
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 0.75rem;
-            text-align: left;
-        }
-
-        th {
-            background-color: var(--purple);
-            color: var(--white);
-            text-transform: uppercase;
-            font-size: 0.9rem;
-        }
-
-        td {
-            background-color: rgba(255, 255, 255, 0.05);
-            transition: background-color 0.3s ease;
-        }
-
-        tr:hover td {
-            background-color: var(--hover-row);
-        }
-
-        .table-container {
-            overflow-x: auto;
-            margin-bottom: 1.5rem;
-        }
-
-        .table-container::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        .table-container::-webkit-scrollbar-thumb {
-            background-color: var(--purple-dark);
-            border-radius: 10px;
-        }
-
-        .table-container::-webkit-scrollbar-track {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Adjust button styles for better visibility */
-        button {
-            padding: 0.5rem 1rem; /* Adjust padding */
-            font-size: 0.875rem; /* Ensure text is readable */
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        button:hover {
-            transform: scale(1.05);
-        }
-
-        .bg-green-500:hover {
-            background-color: #16a34a;
-        }
-
-        .bg-red-500:hover {
-            background-color: #dc2626;
-        }
-
-        .bg-purple-500:hover {
-            background-color: #7c3aed; /* Ensure hover effect is visible */
         }
 
         h1, h2 {
@@ -541,82 +518,20 @@ $trans = $translations[$selected_lang];
     <script>
         // JavaScript to handle modal display
         function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+            } else {
+                console.error(`Modal with ID "${modalId}" not found.`);
+            }
         }
 
         function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        // Function to handle banning a user
-        async function banUser(userId, duration, reason) {
-            const response = await fetch('ban_user.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId, duration: duration, reason: reason })
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    const banButton = document.getElementById(`banButton-${userId}`);
-                    banButton.textContent = 'Unban';
-                    banButton.classList.remove('bg-red-500', 'hover:bg-red-600');
-                    banButton.classList.add('bg-green-500', 'hover:bg-green-600');
-                    banButton.onclick = () => unbanUser(userId);
-                    closeModal(`banModal-${userId}`);
-                    alert(result.message);
-                } else {
-                    alert(result.error);
-                }
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
             } else {
-                alert('An error occurred while banning the user.');
-            }
-        }
-
-        // Function to handle unbanning a user
-        async function unbanUser(userId) {
-            const response = await fetch('unban_user.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId })
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    const banButton = document.getElementById(`banButton-${userId}`);
-                    banButton.textContent = 'Ban';
-                    banButton.classList.remove('bg-green-500', 'hover:bg-green-600');
-                    banButton.classList.add('bg-red-500', 'hover:bg-red-600');
-                    banButton.onclick = () => openModal(`banModal-${userId}`);
-                    alert(result.message);
-                } else {
-                    alert(result.error);
-                }
-            } else {
-                alert('An error occurred while unbanning the user.');
-            }
-        }
-
-        async function updateRole(userId, newRole) {
-            const response = await fetch('update_role.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId, id_perm: newRole })
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    alert(result.message);
-                    closeModal(`roleModal-${userId}`);
-                    location.reload(); // Reload to reflect changes
-                } else {
-                    alert(result.error);
-                }
-            } else {
-                alert('An error occurred while updating the role.');
+                console.error(`Modal with ID "${modalId}" not found.`);
             }
         }
     </script>
@@ -626,11 +541,12 @@ $trans = $translations[$selected_lang];
     <div class="container mx-auto mt-10">
         <h1 class="text-4xl text-center text-gray-light mb-10"><?= $trans['admin_panel'] ?></h1>
 
+        <!-- Tableau des utilisateurs -->
         <div class="section-container mb-10">
             <h2 class="section-title"><?= $trans['user_info'] ?></h2>
-            <div class="table-container">
-                <table class="table-auto w-full text-gray-light">
-                    <thead>
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg w-full max-w-full max-h-screen">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <?php
                             $columns = [
@@ -646,7 +562,7 @@ $trans = $translations[$selected_lang];
                                 'actions' => $trans['actions'],
                             ];
                             foreach ($columns as $column => $label) {
-                                echo "<th class='px-4 py-2'>" . htmlspecialchars($label) . "</th>";
+                                echo "<th scope='col' class='px-6 py-3'>" . htmlspecialchars($label) . "</th>";
                             }
                             ?>
                         </tr>
@@ -656,26 +572,89 @@ $trans = $translations[$selected_lang];
                         $stmt = $pdo->query("SELECT * FROM users");
                         if ($stmt->rowCount() > 0) {
                             while ($row = $stmt->fetch()) {
-                                // Affichage en mode tableau
-                                echo "<tr>";
+                                echo "<tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200'>";
                                 foreach (array_keys($columns) as $column) {
                                     if ($column === 'actions') {
-                                        echo "<td class='border px-4 py-2 text-center'>
-                                                <button id='banButton-{$row['id']}' onclick=\"openModal('banModal-{$row['id']}')\" class='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'>
-                                                    <i class=\"fas fa-ban\"></i> Ban
-                                                </button>
-                                                <button id='roleButton-{$row['id']}' onclick=\"openModal('roleModal-{$row['id']}')\" class='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600'>
-                                                    <i class=\"fas fa-user-cog\"></i> Role
-                                                </button>
+                                        $viewModalId = "viewModal-" . $row['id'];
+                                        $banModalId = "banModal-" . $row['id'];
+                                        $roleModalId = "roleModal-" . $row['id'];
+
+                                        echo "<td class='px-6 py-4 text-center'>
+                                                <div class='grid grid-cols-2 gap-4'>
+                                                    <button onclick=\"openModal('$viewModalId')\" class='w-full px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600'>
+                                                        <i class='fas fa-eye'></i> Voir
+                                                    </button>
+                                                    <button onclick=\"openModal('$banModalId')\" class='w-full px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600'>
+                                                        <i class='fas fa-ban'></i> Bannir
+                                                    </button>
+                                                    <button onclick=\"openModal('$roleModalId')\" class='w-full px-3 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600'>
+                                                        <i class='fas fa-user-cog'></i> Rôle
+                                                    </button>
+                                                </div>
                                               </td>";
+
+                                        // Modal pour voir les détails
+                                        echo "<div id='$viewModalId' class='modal' style='display: none;'>
+                                                <div class='modal-content'>
+                                                    <h3>Détails de l'utilisateur</h3>
+                                                    <p>Nom : " . htmlspecialchars($row['name']) . "</p>
+                                                    <p>Email : " . htmlspecialchars($row['email']) . "</p>
+                                                    <button onclick=\"closeModal('$viewModalId')\" class='px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600'>Fermer</button>
+                                                </div>
+                                              </div>";
+
+                                        // Modal pour bannir un utilisateur
+                                        echo "<div id='$banModalId' class='modal' style='display: none;'>
+                                                <div class='modal-content'>
+                                                    <h3>Bannir l'utilisateur</h3>
+                                                    <form onsubmit=\"event.preventDefault(); banUser({$row['id']}, document.getElementById('banDuration-{$row['id']}').value, document.getElementById('banReason-{$row['id']}').value)\">
+                                                        <label>Motif :</label>
+                                                        <textarea id='banReason-{$row['id']}' required></textarea>
+                                                        <label>Durée :</label>
+                                                        <select id='banDuration-{$row['id']}' required>
+                                                            <option value='1'>1 jour</option>
+                                                            <option value='7'>1 semaine</option>
+                                                            <option value='30'>1 mois</option>
+                                                            <option value='0'>Permanent</option>
+                                                        </select>
+                                                        <div class='mt-4'>
+                                                            <button type='submit' class='px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600'>Confirmer</button>
+                                                            <button type='button' onclick=\"closeModal('$banModalId')\" class='px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600'>Annuler</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                              </div>";
+
+                                        // Modal pour gérer les rôles
+                                        echo "<div id='$roleModalId' class='modal' style='display: none;'>
+                                                <div class='modal-content'>
+                                                    <h3>Gérer le rôle</h3>
+                                                    <form onsubmit=\"event.preventDefault(); updateRole({$row['id']}, document.getElementById('roleSelect-{$row['id']}').value)\">
+                                                        <label>Rôle :</label>
+                                                        <select id='roleSelect-{$row['id']}' required>
+                                                            <option value='1'>Utilisateur</option>
+                                                            <option value='2'>Guide</option>
+                                                            <option value='3'>Modérateur</option>
+                                                            <option value='4'>Développeur</option>
+                                                            <option value='5'>Administrateur</option>
+                                                        </select>
+                                                        <div class='mt-4'>
+                                                            <button type='submit' class='px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600'>Enregistrer</button>
+                                                            <button type='button' onclick=\"closeModal('$roleModalId')\" class='px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600'>Annuler</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                              </div>";
                                     } else {
-                                        echo "<td class='border px-4 py-2'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
+                                        echo "<td class='px-6 py-4'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
                                     }
                                 }
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='" . count($columns) . "' class='text-center border px-4 py-2'>{$trans['no_records_found']}</td></tr>";
+                            echo "<tr class='bg-white dark:bg-gray-800'>
+                                    <td colspan='" . count($columns) . "' class='px-6 py-4 text-center'>{$trans['no_records_found']}</td>
+                                  </tr>";
                         }
                         ?>
                     </tbody>
@@ -683,12 +662,12 @@ $trans = $translations[$selected_lang];
             </div>
         </div>
 
-        <!-- Permissions Section -->
+        <!-- Tableau des permissions -->
         <div class="section-container mb-10">
             <h2 class="section-title"><?= $trans['permissions'] ?></h2>
-            <div class="table-container">
-                <table class="table-auto w-full text-gray-light">
-                    <thead>
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <?php
                             $columns = [
@@ -704,7 +683,7 @@ $trans = $translations[$selected_lang];
                                 'can_delete_tickets' => $trans['can_delete_tickets'],
                             ];
                             foreach ($columns as $column => $label) {
-                                echo "<th class='px-4 py-2'>" . htmlspecialchars($label) . "</th>";
+                                echo "<th scope='col' class='px-6 py-3'>" . htmlspecialchars($label) . "</th>";
                             }
                             ?>
                         </tr>
@@ -714,27 +693,32 @@ $trans = $translations[$selected_lang];
                         $stmt = $pdo->query("SELECT * FROM permissions");
                         if ($stmt->rowCount() > 0) {
                             while ($row = $stmt->fetch()) {
-                                echo "<tr>";
+                                echo "<tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200'>";
                                 foreach (array_keys($columns) as $column) {
                                     if (in_array($column, ['can_reply_ticket', 'can_ban_permanently', 'can_ban_temporarily', 'can_post_patchnotes', 'can_manage_users', 'can_view_reports', 'can_edit_roles', 'can_delete_tickets'])) {
-                                        $buttonClass = $row[$column] ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600';
-                                        $buttonText = $row[$column] ? $trans['yes'] : $trans['no'];
-                                        echo "<td class='border px-4 py-2 text-center'>
+                                        $icon = $row[$column] 
+                                            ? '<i class="fas fa-check text-green-500"></i>' 
+                                            : '<i class="fas fa-times text-red-500"></i>';
+                                        echo "<td class='px-6 py-4 text-center'>
                                                 <form method='POST' action='update_permission.php'>
                                                     <input type='hidden' name='id_perm' value='{$row['id_perm']}'>
                                                     <input type='hidden' name='column' value='{$column}'>
                                                     <input type='hidden' name='lang' value='" . htmlspecialchars($selected_lang) . "'>
-                                                    <button type='submit' class='px-4 py-2 text-white rounded {$buttonClass}' title='{$trans['toggle_permission']}'>{$buttonText}</button>
+                                                    <button type='submit' class='w-10 h-10 flex items-center justify-center text-lg font-bold rounded-full' title='{$trans['toggle_permission']}'>
+                                                        {$icon}
+                                                    </button>
                                                 </form>
                                               </td>";
                                     } else {
-                                        echo "<td class='border px-4 py-2'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
+                                        echo "<td class='px-6 py-4'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
                                     }
                                 }
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='" . count($columns) . "' class='text-center border px-4 py-2'>{$trans['no_records_found']}</td></tr>";
+                            echo "<tr class='bg-white dark:bg-gray-800'>
+                                    <td colspan='" . count($columns) . "' class='px-6 py-4 text-center'>{$trans['no_records_found']}</td>
+                                  </tr>";
                         }
                         ?>
                     </tbody>
@@ -742,12 +726,12 @@ $trans = $translations[$selected_lang];
             </div>
         </div>
 
-        <!-- Role Section -->
+        <!-- Tableau des rôles -->
         <div class="section-container mb-10">
             <h2 class="section-title"><?= $trans['role'] ?></h2>
-            <div class="table-container">
-                <table class="table-auto w-full text-gray-light">
-                    <thead>
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <?php
                             $columns = [
@@ -756,7 +740,7 @@ $trans = $translations[$selected_lang];
                                 'updated_by', 'deleted_at', 'autorisation'
                             ];
                             foreach ($columns as $column) {
-                                echo "<th class='px-4 py-2'>" . htmlspecialchars($trans['role_columns'][$column] ?? $column) . "</th>";
+                                echo "<th scope='col' class='px-6 py-3'>" . htmlspecialchars($trans['role_columns'][$column] ?? $column) . "</th>";
                             }
                             ?>
                         </tr>
@@ -766,44 +750,40 @@ $trans = $translations[$selected_lang];
                         $stmt = $pdo->query("SELECT * FROM role");
                         if ($stmt->rowCount() > 0) {
                             while ($row = $stmt->fetch()) {
-                                echo "<tr>";
+                                echo "<tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200'>";
                                 foreach ($columns as $column) {
                                     if ($column === 'is_active') {
                                         $value = $row[$column] ? $trans['yes'] : $trans['no'];
-                                        echo "<td class='border px-4 py-2 text-center'>{$value}</td>";
-                                    } elseif ($column === 'created_by') {
+                                        echo "<td class='px-6 py-4 text-center'>{$value}</td>";
+                                    } elseif ($column === 'created_by' || $column === 'updated_by') {
                                         $userStmt = $pdo->prepare("SELECT name FROM users WHERE id = :id");
-                                        $userStmt->execute(['id' => $row['created_by']]);
-                                        $createdByName = $userStmt->fetchColumn();
-                                        echo "<td class='border px-4 py-2'>" . htmlspecialchars($createdByName ?: $trans['no_records_found']) . "</td>";
-                                    } elseif ($column === 'updated_by') {
-                                        $userStmt = $pdo->prepare("SELECT name FROM users WHERE id = :id");
-                                        $userStmt->execute(['id' => $row['updated_by']]);
-                                        $updatedByName = $userStmt->fetchColumn();
-                                        echo "<td class='border px-4 py-2'>" . htmlspecialchars($updatedByName ?: $trans['no_records_found']) . "</td>";
+                                        $userStmt->execute(['id' => $row[$column]]);
+                                        $userName = $userStmt->fetchColumn() ?? $trans['no_records_found'];
+                                        echo "<td class='px-6 py-4'>" . htmlspecialchars($userName) . "</td>";
                                     } elseif ($column === 'deleted_at') {
                                         $deletedAt = $row['deleted_at'] ?? '';
                                         if ($deletedAt) {
                                             $formattedDate = date('d/m/Y', strtotime($deletedAt));
                                             $formattedTime = date('H:i:s', strtotime($deletedAt));
-                                            echo "<td class='border px-4 py-2 text-center'>{$formattedDate}<br>{$formattedTime}</td>";
+                                            echo "<td class='px-6 py-4 text-center'>{$formattedDate}<br>{$formattedTime}</td>";
                                         } else {
-                                            echo "<td class='border px-4 py-2 text-center'>-</td>";
+                                            echo "<td class='px-6 py-4 text-center'>-</td>";
                                         }
                                     } elseif ($column === 'autorisation') {
-                                        // Récupérer le nom de l'autorisation
                                         $permStmt = $pdo->prepare("SELECT nom FROM permissions WHERE id_perm = :id_perm");
                                         $permStmt->execute(['id_perm' => $row['autorisation']]);
                                         $permissionName = $permStmt->fetchColumn() ?? $trans['no_records_found'];
-                                        echo "<td class='border px-4 py-2'>" . htmlspecialchars($permissionName) . "</td>";
+                                        echo "<td class='px-6 py-4'>" . htmlspecialchars($permissionName) . "</td>";
                                     } else {
-                                        echo "<td class='border px-4 py-2'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
+                                        echo "<td class='px-6 py-4'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
                                     }
                                 }
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='" . count($columns) . "' class='text-center border px-4 py-2'>{$trans['no_records_found']}</td></tr>";
+                            echo "<tr class='bg-white dark:bg-gray-800'>
+                                    <td colspan='" . count($columns) . "' class='px-6 py-4 text-center'>{$trans['no_records_found']}</td>
+                                  </tr>";
                         }
                         ?>
                     </tbody>
@@ -811,17 +791,70 @@ $trans = $translations[$selected_lang];
             </div>
         </div>
 
-        <!-- Ticket Section -->
+        <!-- Tableau des bans -->
         <div class="section-container mb-10">
-            <h2 class="section-title"><?= $trans['ticket'] ?></h2>
-            <div class="table-container">
-                <table class="table-auto w-full text-gray-light">
-                    <thead>
+            <h2 class="section-title"><?= $trans['ban_user'] ?></h2>
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <?php
-                            $columns = ['id', 'creator', 'ticket_name', 'message', 'created_at', 'is_closed', 'closed_at', 'closed_by', 'updated_at', 'deleted_at'];
+                            $columns = ['id', 'user_id', 'reason', 'duration', 'created_at', 'expires_at'];
                             foreach ($columns as $column) {
-                                echo "<th class='px-4 py-2'>" . htmlspecialchars($trans['columns'][$column]) . "</th>";
+                                echo "<th scope='col' class='px-6 py-3'>" . htmlspecialchars($trans['columns'][$column] ?? $column) . "</th>";
+                            }
+                            ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $stmt = $pdo->query("SELECT * FROM bans");
+                        if ($stmt->rowCount() > 0) {
+                            while ($row = $stmt->fetch()) {
+                                echo "<tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200'>";
+                                foreach ($columns as $column) {
+                                    if ($column === 'user_id') {
+                                        $userStmt = $pdo->prepare("SELECT name FROM users WHERE id = :id");
+                                        $userStmt->execute(['id' => $row['user_id']]);
+                                        $userName = $userStmt->fetchColumn() ?? $trans['no_records_found'];
+                                        echo "<td class='px-6 py-4'>" . htmlspecialchars($userName) . "</td>";
+                                    } elseif (in_array($column, ['created_at', 'expires_at'])) {
+                                        $date = $row[$column] ?? '';
+                                        if ($date) {
+                                            $formattedDate = date('d/m/Y', strtotime($date));
+                                            $formattedTime = date('H:i:s', strtotime($date));
+                                            echo "<td class='px-6 py-4 text-center'>{$formattedDate}<br>{$formattedTime}</td>";
+                                        } else {
+                                            echo "<td class='px-6 py-4 text-center'>-</td>";
+                                        }
+                                    } else {
+                                        echo "<td class='px-6 py-4'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
+                                    }
+                                }
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr class='bg-white dark:bg-gray-800'>
+                                    <td colspan='" . count($columns) . "' class='px-6 py-4 text-center'>{$trans['no_records_found']}</td>
+                                  </tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tableau des tickets -->
+        <div class="section-container mb-10">
+            <h2 class="section-title"><?= $trans['ticket'] ?></h2>
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <?php
+                            $columns = ['id', 'creator', 'ticket_name', 'message', 'created_at', 'is_closed', 'updated_at', 'deleted_at'];
+                            foreach ($columns as $column) {
+                                echo "<th scope='col' class='px-6 py-3'>" . htmlspecialchars($trans['columns'][$column]) . "</th>";
                             }
                             ?>
                         </tr>
@@ -831,25 +864,50 @@ $trans = $translations[$selected_lang];
                         $stmt = $pdo->query("SELECT * FROM ticket");
                         if ($stmt->rowCount() > 0) {
                             while ($row = $stmt->fetch()) {
-                                echo "<tr>";
+                                echo "<tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200'>";
                                 foreach ($columns as $column) {
-                                    if (in_array($column, ['created_at', 'updated_at', 'closed_at', 'deleted_at'])) {
+                                    if ($column === 'creator') {
+                                        $userStmt = $pdo->prepare("SELECT name FROM users WHERE id = :id");
+                                        $userStmt->execute(['id' => $row['creator']]);
+                                        $creatorName = $userStmt->fetchColumn() ?? $trans['no_records_found'];
+                                        echo "<td class='px-6 py-4'>" . htmlspecialchars($creatorName) . "</td>";
+                                    } elseif ($column === 'message') {
+                                        echo "<td class='px-6 py-4 text-center'>
+                                                <button onclick=\"openModal('messageModal-{$row['id']}')\" class='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600'>
+                                                    <i class='fas fa-eye'></i> {$trans['view_message']}
+                                                </button>
+                                                <div id='messageModal-{$row['id']}' class='modal' style='display: none;'>
+                                                    <div class='modal-content'>
+                                                        <h3>{$trans['message']}</h3>
+                                                        <p>" . htmlspecialchars($row['message']) . "</p>
+                                                        <button onclick=\"closeModal('messageModal-{$row['id']}')\" class='px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600'>
+                                                            {$trans['ban_user_modal_cancel']}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                              </td>";
+                                    } elseif ($column === 'is_closed') {
+                                        $status = $row['is_closed'] == 0 ? $trans['open'] : $trans['closed'];
+                                        echo "<td class='px-6 py-4 text-center'>{$status}</td>";
+                                    } elseif (in_array($column, ['created_at', 'updated_at', 'deleted_at'])) {
                                         $date = $row[$column] ?? '';
                                         if ($date) {
                                             $formattedDate = date('d/m/Y', strtotime($date));
                                             $formattedTime = date('H:i:s', strtotime($date));
-                                            echo "<td class='border px-4 py-2 text-center'>{$formattedDate}<br>{$formattedTime}</td>";
+                                            echo "<td class='px-6 py-4 text-center'>{$formattedDate}<br>{$formattedTime}</td>";
                                         } else {
-                                            echo "<td class='border px-4 py-2 text-center'>-</td>";
+                                            echo "<td class='px-6 py-4 text-center'>-</td>";
                                         }
                                     } else {
-                                        echo "<td class='border px-4 py-2'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
+                                        echo "<td class='px-6 py-4'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
                                     }
                                 }
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='" . count($columns) . "' class='text-center border px-4 py-2'>Aucun enregistrement trouvé</td></tr>";
+                            echo "<tr class='bg-white dark:bg-gray-800'>
+                                    <td colspan='" . count($columns) . "' class='px-6 py-4 text-center'>{$trans['no_records_found']}</td>
+                                  </tr>";
                         }
                         ?>
                     </tbody>
@@ -857,17 +915,17 @@ $trans = $translations[$selected_lang];
             </div>
         </div>
 
-        <!-- Ticket Message Section -->
+        <!-- Tableau des messages des tickets -->
         <div class="section-container mb-10">
             <h2 class="section-title"><?= $trans['ticket_message'] ?></h2>
-            <div class="table-container">
-                <table class="table-auto w-full text-gray-light">
-                    <thead>
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
                         <tr>
                             <?php
-                            $columns = ['id', 'ticket_id', 'message', 'created_at', 'updated_at'];
+                            $columns = ['id', 'ticket_id', 'message', 'created_at', 'status'];
                             foreach ($columns as $column) {
-                                echo "<th class='px-4 py-2'>" . htmlspecialchars($trans['columns'][$column] ?? $column) . "</th>";
+                                echo "<th scope='col' class='px-6 py-3'>" . htmlspecialchars($trans['columns'][$column] ?? $column) . "</th>";
                             }
                             ?>
                         </tr>
@@ -877,41 +935,63 @@ $trans = $translations[$selected_lang];
                         $stmt = $pdo->query("SELECT * FROM ticket_message");
                         if ($stmt->rowCount() > 0) {
                             while ($row = $stmt->fetch()) {
-                                echo "<tr>";
+                                echo "<tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200'>";
                                 foreach ($columns as $column) {
-                                    if (in_array($column, ['created_at', 'updated_at', 'closed_at', 'deleted_at'])) {
+                                    if ($column === 'message') {
+                                        echo "<td class='px-6 py-4 text-center'>
+                                                <button onclick=\"openModal('messageModal-{$row['id']}')\" class='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600'>
+                                                    <i class='fas fa-eye'></i> {$trans['view_message']}
+                                                </button>
+                                                <div id='messageModal-{$row['id']}' class='modal' style='display: none;'>
+                                                    <div class='modal-content'>
+                                                        <h3>{$trans['message']}</h3>
+                                                        <p>" . htmlspecialchars($row['message']) . "</p>
+                                                        <button onclick=\"closeModal('messageModal-{$row['id']}')\" class='px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600'>
+                                                            {$trans['ban_user_modal_cancel']}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                              </td>";
+                                    } elseif ($column === 'created_at') {
                                         $date = $row[$column] ?? '';
                                         if ($date) {
                                             $formattedDate = date('d/m/Y', strtotime($date));
                                             $formattedTime = date('H:i:s', strtotime($date));
-                                            echo "<td class='border px-4 py-2 text-center'>{$formattedDate}<br>{$formattedTime}</td>";
+                                            echo "<td class='px-6 py-4 text-center'>{$formattedDate}<br>{$formattedTime}</td>";
                                         } else {
-                                            echo "<td class='border px-4 py-2 text-center'>-</td>";
+                                            echo "<td class='px-6 py-4 text-center'>-</td>";
                                         }
+                                    } elseif ($column === 'status') {
+                                        $status = $row[$column] == 0 ? $trans['open'] : $trans['closed'];
+                                        echo "<td class='px-6 py-4 text-center'>{$status}</td>";
                                     } else {
-                                        echo "<td class='border px-4 py-2'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
+                                        echo "<td class='px-6 py-4 text-center'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
                                     }
                                 }
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='" . count($columns) . "' class='text-center border px-4 py-2'>Aucun enregistrement trouvé</td></tr>";
+                            echo "<tr class='bg-white dark:bg-gray-800'>
+                                    <td colspan='" . count($columns) . "' class='px-6 py-4 text-center'>{$trans['no_records_found']}</td>
+                                  </tr>";
                         }
                         ?>
                     </tbody>
                 </table>
             </div>
         </div>
+
+        <!-- Tableau des archives des tickets -->
         <div class="section-container mb-10">
             <h2 class="section-title"><?= $trans['archive_ticket'] ?></h2>
-            <div class="table-container">
-                <table class="table-auto w-full text-gray-light">
-                    <thead>
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <?php
-                            $columns = ['id', 'creator', 'ticket_name', 'message', 'created_at', 'is_closed', 'closed_at', 'closed_by', 'updated_at', 'deleted_at'];
+                            $columns = ['id', 'creator', 'ticket_name', 'created_at', 'closed_by', 'updated_at', 'message'];
                             foreach ($columns as $column) {
-                                echo "<th class='px-4 py-2'>" . htmlspecialchars($trans['columns'][$column] ?? $column) . "</th>";
+                                echo "<th scope='col' class='px-6 py-3'>" . htmlspecialchars($trans['columns'][$column] ?? $column) . "</th>";
                             }
                             ?>
                         </tr>
@@ -921,25 +1001,47 @@ $trans = $translations[$selected_lang];
                         $stmt = $pdo->query("SELECT * FROM archive_ticket");
                         if ($stmt->rowCount() > 0) {
                             while ($row = $stmt->fetch()) {
-                                echo "<tr>";
+                                echo "<tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200'>";
                                 foreach ($columns as $column) {
-                                    if (in_array($column, ['created_at', 'updated_at', 'closed_at', 'deleted_at'])) {
+                                    if ($column === 'creator') {
+                                        $userStmt = $pdo->prepare("SELECT name FROM users WHERE id = :id");
+                                        $userStmt->execute(['id' => $row['creator']]);
+                                        $creatorName = $userStmt->fetchColumn() ?? $trans['no_records_found'];
+                                        echo "<td class='px-6 py-4'>" . htmlspecialchars($creatorName) . "</td>";
+                                    } elseif ($column === 'message') {
+                                        echo "<td class='px-6 py-4 text-center'>
+                                                <button onclick=\"openModal('messageModal-{$row['id']}')\" class='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600'>
+                                                    <i class='fas fa-eye'></i> {$trans['view_message']}
+                                                </button>
+                                                <div id='messageModal-{$row['id']}' class='modal' style='display: none;'>
+                                                    <div class='modal-content'>
+                                                        <h3>{$trans['message']}</h3>
+                                                        <p>" . htmlspecialchars($row['message']) . "</p>
+                                                        <button onclick=\"closeModal('messageModal-{$row['id']}')\" class='px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600'>
+                                                            {$trans['ban_user_modal_cancel']}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                              </td>";
+                                    } elseif (in_array($column, ['created_at', 'updated_at'])) {
                                         $date = $row[$column] ?? '';
                                         if ($date) {
                                             $formattedDate = date('d/m/Y', strtotime($date));
                                             $formattedTime = date('H:i:s', strtotime($date));
-                                            echo "<td class='border px-4 py-2 text-center'>{$formattedDate}<br>{$formattedTime}</td>";
+                                            echo "<td class='px-6 py-4 text-center'>{$formattedDate}<br>{$formattedTime}</td>";
                                         } else {
-                                            echo "<td class='border px-4 py-2 text-center'>-</td>";
+                                            echo "<td class='px-6 py-4 text-center'>-</td>";
                                         }
                                     } else {
-                                        echo "<td class='border px-4 py-2'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
+                                        echo "<td class='px-6 py-4'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
                                     }
                                 }
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='" . count($columns) . "' class='text-center border px-4 py-2'>{$trans['no_records_found']}</td></tr>";
+                            echo "<tr class='bg-white dark:bg-gray-800'>
+                                    <td colspan='" . count($columns) . "' class='px-6 py-4 text-center'>{$trans['no_records_found']}</td>
+                                  </tr>";
                         }
                         ?>
                     </tbody>
