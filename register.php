@@ -31,16 +31,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Adresse email invalide.';
     } elseif (!empty($_FILES['profile_picture']['name'])) {
-        // Gestion de l'upload de l'image
+        // Gestion de l'upload de l'image avec nom du compte
         $target_dir = "uploads/";
-        $target_file = $target_dir . basename($_FILES['profile_picture']['name']);
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        $extension = strtolower(pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION));
         $allowed_types = ['jpg', 'jpeg', 'png'];
+        $safeName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $name);
+        $uniqueName = $safeName . '.' . $extension;
+        $target_file = $target_dir . $uniqueName;
 
-        // Vérifiez si le fichier a été correctement téléchargé
         if ($_FILES['profile_picture']['error'] !== UPLOAD_ERR_OK) {
             $error = 'Erreur lors du téléchargement de l\'image. Code d\'erreur : ' . $_FILES['profile_picture']['error'];
-        } elseif (!in_array($imageFileType, $allowed_types)) {
+        } elseif (!in_array($extension, $allowed_types)) {
             $error = 'Seules les images JPG, JPEG et PNG sont autorisées.';
         } elseif (!is_uploaded_file($_FILES['profile_picture']['tmp_name'])) {
             $error = 'Le fichier téléchargé est invalide.';
@@ -59,6 +60,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->fetchColumn() > 0) {
                 $error = 'Nom ou email déjà utilisé.';
             } else {
+                // Définir l'image par défaut si aucune image uploadée
+                if (empty($profile_picture)) {
+                    $profile_picture = 'uploads/default_profile.png';
+                }
                 // Insérez l'utilisateur dans la base de données
                 $stmt = $pdo->prepare('
                     INSERT INTO users (name, email, phone, id_perm, password, ticket_count, open_ticket_count, closed_ticket_count, profile_picture, created_at, updated_at)
@@ -73,8 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'ticket_count' => 0,
                     'open_ticket_count' => 0,
                     'closed_ticket_count' => 0,
-                    'profile_picture' => $profile_picture ?: 'uploads/default.png', // Par défaut, une image générique
+                    'profile_picture' => $profile_picture,
                 ]);
+                $userId = $pdo->lastInsertId();
 
                 // Connectez l'utilisateur après l'inscription
                 $_SESSION['logged_in'] = true;

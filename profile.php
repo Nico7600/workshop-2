@@ -134,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
 
     try {
         // Vérification du mot de passe actuel
-        $stmt = $pdo->prepare('SELECT password FROM users WHERE id = :user_id');
+        $stmt = $pdo->prepare('SELECT password, profile_picture FROM users WHERE id = :user_id');
         $stmt->execute(['user_id' => $_SESSION['user']['id']]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -161,16 +161,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
             $params['new_phone'] = $newPhone;
         }
 
+        // Gestion de l'upload de la photo de profil avec nom du compte
+        $profilePicturePath = $user['profile_picture'] ?? 'uploads/default_profile.png';
         if ($profilePicture && $profilePicture['error'] === UPLOAD_ERR_OK) {
             $uploadDir = __DIR__ . '/uploads/';
-            $uploadFile = $uploadDir . basename($profilePicture['name']);
-            if (move_uploaded_file($profilePicture['tmp_name'], $uploadFile)) {
-                if (!empty($currentUser['profile_picture']) && file_exists(__DIR__ . '/' . $currentUser['profile_picture'])) {
-                    unlink(__DIR__ . '/' . $currentUser['profile_picture']);
-                }
-                $updateQuery .= 'profile_picture = :profile_picture, ';
-                $params['profile_picture'] = 'uploads/' . basename($profilePicture['name']);
+            $extension = strtolower(pathinfo($profilePicture['name'], PATHINFO_EXTENSION));
+            // Nettoyer le nom d'utilisateur pour le nom de fichier
+            $safeName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $newUsername ?: $user['name']);
+            $uniqueName = $safeName . '.' . $extension;
+            $uploadFile = $uploadDir . $uniqueName;
+            // Supprimer l'ancienne photo si elle existe et n'est pas la par défaut
+            if (!empty($user['profile_picture']) && 
+                file_exists(__DIR__ . '/' . $user['profile_picture']) && 
+                $user['profile_picture'] !== 'uploads/default_profile.png') {
+                unlink(__DIR__ . '/' . $user['profile_picture']);
             }
+            if (move_uploaded_file($profilePicture['tmp_name'], $uploadFile)) {
+                $profilePicturePath = 'uploads/' . $uniqueName;
+                $updateQuery .= 'profile_picture = :profile_picture, ';
+                $params['profile_picture'] = $profilePicturePath;
+            }
+        } elseif (empty($user['profile_picture']) || !file_exists(__DIR__ . '/' . $user['profile_picture'])) {
+            // Si pas d'image, mettre l'image par défaut
+            $profilePicturePath = 'uploads/default_profile.png';
+            $updateQuery .= 'profile_picture = :profile_picture, ';
+            $params['profile_picture'] = $profilePicturePath;
         }
 
         if (!empty($newPassword)) {
@@ -268,13 +283,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                 </div>
                 <div>
                     <label for="phone" class="block text-sm font-medium text-gray-300"><?php echo htmlspecialchars($t['phone']); ?></label>
-                    <input type="text" name="phone" id="phone" value="<?php echo htmlspecialchars($currentUser['phone'] ?? ''); ?>" class="form-input mt-1 block w-full bg-gray-700 text-white border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <input 
+                        type="tel" 
+                        name="phone" 
+                        id="phone" 
+                        value="<?php echo htmlspecialchars($currentUser['phone'] ?? ''); ?>" 
+                        class="form-input mt-1 block w-full bg-gray-700 text-white border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        pattern="^\+?[0-9]{7,15}$"
+                        title="Veuillez entrer un numéro de téléphone valide (chiffres uniquement, 7 à 15 chiffres, peut commencer par +)">
                 </div>
                 <div>
                     <label for="profile_picture" class="block text-sm font-medium text-gray-300"><?php echo htmlspecialchars($t['profile_picture']); ?></label>
-                    <?php if (!empty($currentUser['profile_picture'])): ?>
-                        <img src="<?php echo htmlspecialchars($currentUser['profile_picture']); ?>" alt="<?php echo htmlspecialchars($t['profile_picture']); ?>" class="w-20 h-20 rounded-full mb-4">
-                    <?php endif; ?>
+                    <?php
+                        // Correction affichage image de profil
+                        $profilePic = $currentUser['profile_picture'] ?? '';
+                        if (empty($profilePic) || !file_exists(__DIR__ . '/' . $profilePic)) {
+                            $profilePic = 'uploads/default_profile.png';
+                        }
+                    ?>
+                    <img src="<?php echo htmlspecialchars($profilePic); ?>" alt="<?php echo htmlspecialchars($t['profile_picture']); ?>" class="w-20 h-20 rounded-full mb-4">
                     <input type="file" name="profile_picture" id="profile_picture" class="form-input mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                 </div>
                 <div>
