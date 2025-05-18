@@ -1,6 +1,11 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 include 'db_connection.php';
+
+file_put_contents(__DIR__ . '/debug_archive.log', "🟡 archive_tickets.php appelé\n", FILE_APPEND);
 
 if (!isset($db) || !$db) {
     http_response_code(500);
@@ -42,6 +47,7 @@ $text_ui = $translations[$lang];
 $userId = $_SESSION['user']['id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    file_put_contents(__DIR__ . '/debug_archive.log', "🟢 Requête POST reçue : " . file_get_contents('php://input') . "\n", FILE_APPEND);
     $data = json_decode(file_get_contents('php://input'), true);
 
     if (!isset($data['id'])) {
@@ -73,10 +79,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bindParam(':closed_by', $userId, PDO::PARAM_INT);
     $stmt->execute();
 
+    $stmt = $db->prepare("
+        UPDATE users
+        SET 
+            open_ticket_count = IF(open_ticket_count IS NULL OR open_ticket_count < 1, 0, open_ticket_count - 1), 
+            closed_ticket_count = IF(closed_ticket_count IS NULL, 1, closed_ticket_count + 1) 
+        WHERE id = :creatorId
+    ");
+    $stmt->bindParam(':creatorId', $ticket['creator'], PDO::PARAM_INT);
+    $stmt->execute();
+
     // Supprimer le ticket de la table ticket
     $stmt = $db->prepare("DELETE FROM ticket WHERE id = :id");
     $stmt->bindParam(':id', $ticketId, PDO::PARAM_INT);
     $stmt->execute();
+
+    // Envoi de mail à l'utilisateur
+    require_once __DIR__ . '/mail_utils.php';
+    $userMailStmt = $db->prepare("SELECT email FROM users WHERE id = :id");
+    $userMailStmt->bindParam(":id", $ticket['creator'], PDO::PARAM_INT);
+    $userMailStmt->execute();
+    $userMail = $userMailStmt->fetchColumn();
+    if ($userMail) {
+        file_put_contents(__DIR__ . '/debug_archive.log', "📩 Appel à sendTicketNotification avec l’email : $userMail\n", FILE_APPEND);
+
+        sendTicketNotification(
+    $userMail,
+    "Votre ticket #$ticketId a été archivé",
+    "Bonjour,<br>Votre ticket <b>" . htmlspecialchars($ticket['ticket_name']) . "</b> a été archivé.",
+    $ticket['creator']
+);
+    }
 
     http_response_code(200);
     echo "Ticket archivé avec succès.";
@@ -157,3 +190,4 @@ include 'header.php';
     <?php include 'footer.php'; ?>
 </body>
 </html>
+	

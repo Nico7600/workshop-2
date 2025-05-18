@@ -106,6 +106,35 @@
 <?php
 session_start();
 
+require_once 'vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+$dsn = 'mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_NAME'] . ';charset=utf8';
+$username = $_ENV['DB_USER'];
+$password = $_ENV['DB_PASSWORD'];
+
+try {
+    $pdo = new PDO($dsn, $username, $password, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+} catch (PDOException $e) {
+    die('Database connection failed: ' . $e->getMessage());
+}
+
+// Check if the user is banned
+if (isset($_SESSION['user'])) {
+    $user_id = $_SESSION['user']['id'];
+    $stmt = $pdo->prepare("SELECT * FROM bans WHERE user_id = :user_id AND (ban_until IS NULL OR ban_until > NOW())");
+    $stmt->execute([':user_id' => $user_id]);
+    if ($stmt->rowCount() > 0) {
+        session_destroy();
+        header('Location: banned.php');
+        exit();
+    }
+}
+
 $supportedLangs = ['fr', 'en', 'nl'];
 if (isset($_GET['lang'])) {
     $lang = $_GET['lang'];

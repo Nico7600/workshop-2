@@ -23,11 +23,14 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
-$id_perm = (int)$_SESSION['user']['id_perm'];
-if (!in_array($id_perm, [2, 3, 4, 5])) {
+$roleId = (int)$_SESSION['user']['id_perm']; 
+if (!in_array($roleId, [2, 3, 4, 5])) {
     header('Location: index.php');
     exit();
 }
+$stmt = $pdo->prepare("SELECT autorisation FROM role WHERE id = :id");
+$stmt->execute(['id' => $roleId]);
+$permissionId = (int) $stmt->fetchColumn();
 
 $languages = ['en' => 'English', 'fr' => 'Français', 'nl' => 'Nederlands'];
 $selected_lang = $_GET['lang'] ?? 'fr';
@@ -70,7 +73,7 @@ $translations = [
             'id' => 'ID',
             'creator' => 'Créateur',
             'ticket_name' => 'Nom du ticket',
-            'message' => 'Message',
+            'message' => 'Bericht',
             'created_at' => 'Créé le',
             'is_closed' => 'Statut',
             'closed_at' => 'Fermé le',
@@ -356,7 +359,53 @@ $translations = [
     ],
 ];
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['patchnote_title'], $_POST['patchnote_message'])) {
+    $title = trim($_POST['patchnote_title']);
+    $message = trim($_POST['patchnote_message']);
+    $posted_by = $_SESSION['user']['name'] ?? 'admin';
+    if ($title && $message) {
+        $stmt = $pdo->prepare("INSERT INTO patch_note (title, message, posted_by, posted_date) VALUES (?, ?, ?, NOW())");
+        $stmt->execute([$title, $message, $posted_by]);
+        $patchnote_success = true;
+    } else {
+        $patchnote_error = true;
+    }
+}
+
 $trans = $translations[$selected_lang];
+
+// Fonction pour afficher les badges des rôles ayant une permission donnée
+function displayRoleBadges($permissionCol, $pdo, $trans) {
+    // Map id_perm vers badge et nom
+    $roleMap = [
+        1 => ['label' => 'Utilisateur', 'class' => 'badge-user'],
+        2 => ['label' => 'Guide', 'class' => 'badge-guide'],
+        3 => ['label' => 'Modérateur', 'class' => 'badge-modo'],
+        4 => ['label' => 'Développeur', 'class' => 'badge-dev'],
+        5 => ['label' => 'Administrateur', 'class' => 'badge-admin'],
+    ];
+    $badges = [];
+    $stmt = $pdo->query("SELECT id_perm, nom, $permissionCol FROM permissions");
+    while ($row = $stmt->fetch()) {
+        if (!empty($row[$permissionCol])) {
+            $role = $roleMap[$row['id_perm']] ?? null;
+            if ($role) {
+                $badges[] = "<span class='role-badge {$role['class']}'>" . htmlspecialchars($role['label']) . "</span>";
+            }
+        }
+    }
+    if ($badges) {
+        echo "<div class='mb-2'>" . implode('', $badges) . "</div>";
+    }
+}
+
+// Fonction pour vérifier si un utilisateur a une permission donnée
+function userHasPermission($permissionId, $permissionCol, $pdo) {
+    $stmt = $pdo->prepare("SELECT $permissionCol FROM permissions WHERE id_perm = :id_perm");
+    $stmt->execute(['id_perm' => $permissionId]);
+    return (bool)$stmt->fetchColumn();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars($selected_lang) ?>">
@@ -465,6 +514,21 @@ $trans = $translations[$selected_lang];
             width: 100%;
         }
 
+        .notification {
+            position: static;
+            margin: 0 auto 1.5rem auto;
+            min-width: 250px;
+            max-width: 500px;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            display: none;
+            text-align: center;
+        }
+        .notification.success { background: #22c55e; color: #fff; display: block; }
+        .notification.error { background: #ef4444; color: #fff; display: block; }
+
         /* Ajout de styles pour rendre les tableaux responsives */
         @media (max-width: 768px) {
             table {
@@ -514,6 +578,68 @@ $trans = $translations[$selected_lang];
                 padding: 0.25rem 0.5rem; /* Ajustement de l'espacement des boutons */
             }
         }
+
+        /* Centrer le texte dans tous les tableaux */
+        table, thead, tbody, th, td, tr {
+            text-align: center !important;
+        }
+        /* Style pour les badges de rôles */
+        .role-badge {
+            display: inline-block;
+            padding: 0.25em 0.75em;
+            border-radius: 999px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 0 0.2em 0.2em 0;
+            color: #fff;
+        }
+        .badge-user { background: #64748b; }         /* Utilisateur */
+        .badge-guide { background: #22d3ee; }        /* Guide */
+        .badge-modo { background: #f59e42; }         /* Modérateur */
+        .badge-dev { background: #a78bfa; }          /* Développeur */
+        .badge-admin { background: #ef4444; }        /* Administrateur */
+
+        table {
+            background-color: #23272f !important;
+            color: var(--gray-light) !important;
+        }
+        thead {
+            background-color: var(--purple-dark) !important;
+            color: var(--cyan-light) !important;
+        }
+        th {
+            border-bottom: 2px solid var(--purple) !important;
+            background-color: var(--purple-dark) !important;
+            color: var(--cyan-light) !important;
+        }
+        td {
+            background-color: #23272f !important;
+            color: var(--gray-light) !important;
+            border-bottom: 1px solid var(--purple) !important;
+        }
+        tbody tr {
+            transition: background 0.2s;
+        }
+        tbody tr:hover {
+            background-color: #312e81 !important;
+        }
+        /* Adapter les coins arrondis */
+        .sm\:rounded-lg {
+            border-radius: 0.75rem !important;
+            overflow: hidden;
+        }
+        /* Supprimer les backgrounds clairs hérités de Tailwind */
+        .bg-white,
+        .bg-gray-50,
+        .dark\:bg-gray-800,
+        .dark\:bg-gray-700 {
+            background-color: unset !important;
+        }
+        .text-gray-500,
+        .dark\:text-gray-400,
+        .text-gray-700 {
+            color: unset !important;
+        }
     </style>
     <script>
         // JavaScript to handle modal display
@@ -534,16 +660,56 @@ $trans = $translations[$selected_lang];
                 console.error(`Modal with ID "${modalId}" not found.`);
             }
         }
+
+        function showNotification(message, type = 'success') {
+            let notif = document.getElementById('notification');
+            notif.textContent = message;
+            notif.className = 'notification ' + type;
+            notif.style.display = 'block';
+            setTimeout(() => { notif.style.display = 'none'; }, 3000);
+        }
+
+        function confirmPermissionChange(form) {
+            return confirm('Êtes-vous sûr de vouloir modifier cette permission ?');
+        }
     </script>
 </head>
 <body>
+    <div id="notification" class="notification"></div>
     <?php include 'header.php'; ?>
     <div class="container mx-auto mt-10">
-        <h1 class="text-4xl text-center text-gray-light mb-10"><?= $trans['admin_panel'] ?></h1>
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-4xl text-gray-light"><?= $trans['admin_panel'] ?></h1>
+            <button onclick="openModal('patchNoteModal')" class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                <i class="fas fa-plus"></i> Publier un patch note
+            </button>
+        </div>
+        <?php if (!empty($patchnote_success)): ?>
+            <script>window.onload = function(){ showNotification('Patch note publié !', 'success'); };</script>
+        <?php elseif (!empty($patchnote_error)): ?>
+            <script>window.onload = function(){ showNotification('Veuillez remplir tous les champs.', 'error'); };</script>
+        <?php endif; ?>
 
+        <!-- Modal Patch Note -->
+        <div id="patchNoteModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3 class="mb-4 text-xl font-bold text-cyan-400">Publier un patch note</h3>
+                <form method="POST" onsubmit="closeModal('patchNoteModal')">
+                    <input type="text" name="patchnote_title" placeholder="Titre" required class="mb-3 w-full px-3 py-2 rounded border border-gray-300 text-gray-900">
+                    <textarea name="patchnote_message" placeholder="Message" required class="mb-3 w-full px-3 py-2 rounded border border-gray-300 text-gray-900"></textarea>
+                    <div class="flex justify-center gap-4">
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Publier</button>
+                        <button type="button" onclick="closeModal('patchNoteModal')" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        
         <!-- Tableau des utilisateurs -->
         <div class="section-container mb-10">
             <h2 class="section-title"><?= $trans['user_info'] ?></h2>
+            <?php displayRoleBadges('can_manage_users', $pdo, $trans); ?>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg w-full max-w-full max-h-screen">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -579,19 +745,45 @@ $trans = $translations[$selected_lang];
                                         $banModalId = "banModal-" . $row['id'];
                                         $roleModalId = "roleModal-" . $row['id'];
 
-                                        echo "<td class='px-6 py-4 text-center'>
-                                                <div class='grid grid-cols-2 gap-4'>
-                                                    <button onclick=\"openModal('$viewModalId')\" class='w-full px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600'>
-                                                        <i class='fas fa-eye'></i> Voir
-                                                    </button>
-                                                    <button onclick=\"openModal('$banModalId')\" class='w-full px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600'>
-                                                        <i class='fas fa-ban'></i> Bannir
-                                                    </button>
-                                                    <button onclick=\"openModal('$roleModalId')\" class='w-full px-3 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600'>
-                                                        <i class='fas fa-user-cog'></i> Rôle
-                                                    </button>
-                                                </div>
-                                              </td>";
+                                        // Permissions pour chaque action
+                                        $canView = userHasPermission($permissionId, 'can_view_users', $pdo);
+                                        $canBan = userHasPermission($permissionId, 'can_ban_permanently', $pdo) || userHasPermission($permissionId, 'can_ban_temporarily', $pdo);
+                                        $canRole = userHasPermission($permissionId, 'can_edit_roles', $pdo);
+
+                                        // Classes pour griser les boutons si pas la permission
+                                        $disabledBtn = "opacity-50 cursor-not-allowed pointer-events-none";
+                                        $enabledBtn = "";
+
+                                       echo "<td class='px-6 py-4 text-center'>
+        <div class='flex justify-center items-center gap-4'>
+
+            <button " . ($canView ? "onclick=\"openModal('$viewModalId')\"" : "") . "
+                class='flex items-center justify-center w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 " . ($canView ? "" : $disabledBtn) . "'
+                " . ($canView ? "" : "tabindex='-1' aria-disabled='true'") . ">
+                <span class='flex items-center justify-center w-full h-full'>
+                    <i class='fas fa-eye text-xl'></i>
+                </span>
+            </button>
+
+            <button " . ($canBan ? "onclick=\"openModal('$banModalId')\"" : "") . "
+                class='flex items-center justify-center w-12 h-12 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-red-400 " . ($canBan ? "" : $disabledBtn) . "'
+                " . ($canBan ? "" : "tabindex='-1' aria-disabled='true'") . ">
+                <span class='flex items-center justify-center w-full h-full'>
+                    <i class='fas fa-ban text-xl'></i>
+                </span>
+            </button>
+
+            <button " . ($canRole ? "onclick=\"openModal('$roleModalId')\"" : "") . "
+                class='flex items-center justify-center w-12 h-12 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-purple-400 " . ($canRole ? "" : $disabledBtn) . "'
+                " . ($canRole ? "" : "tabindex='-1' aria-disabled='true'") . ">
+                <span class='flex items-center justify-center w-full h-full'>
+                    <i class='fas fa-user-cog text-xl'></i>
+                </span>
+            </button>
+
+        </div>
+      </td>";
+
 
                                         // Modal pour voir les détails
                                         echo "<div id='$viewModalId' class='modal' style='display: none;'>
@@ -614,7 +806,7 @@ $trans = $translations[$selected_lang];
                                                         <select id='banDuration-{$row['id']}' required>
                                                             <option value='1'>1 jour</option>
                                                             <option value='7'>1 semaine</option>
-                                                            <option value='30'>1 mois</option>
+                                                            <option value='30'>1 mois</option>&
                                                             <option value='0'>Permanent</option>
                                                         </select>
                                                         <div class='mt-4'>
@@ -662,9 +854,11 @@ $trans = $translations[$selected_lang];
             </div>
         </div>
 
+
         <!-- Tableau des permissions -->
         <div class="section-container mb-10">
             <h2 class="section-title"><?= $trans['permissions'] ?></h2>
+            <?php displayRoleBadges('can_edit_roles', $pdo, $trans); ?>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -700,7 +894,7 @@ $trans = $translations[$selected_lang];
                                             ? '<i class="fas fa-check text-green-500"></i>' 
                                             : '<i class="fas fa-times text-red-500"></i>';
                                         echo "<td class='px-6 py-4 text-center'>
-                                                <form method='POST' action='update_permission.php'>
+                                                <form method='POST' action='update_permission.php' onsubmit='return confirmPermissionChange(this)'>
                                                     <input type='hidden' name='id_perm' value='{$row['id_perm']}'>
                                                     <input type='hidden' name='column' value='{$column}'>
                                                     <input type='hidden' name='lang' value='" . htmlspecialchars($selected_lang) . "'>
@@ -729,6 +923,7 @@ $trans = $translations[$selected_lang];
         <!-- Tableau des rôles -->
         <div class="section-container mb-10">
             <h2 class="section-title"><?= $trans['role'] ?></h2>
+            <?php displayRoleBadges('can_edit_roles', $pdo, $trans); ?>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -794,6 +989,7 @@ $trans = $translations[$selected_lang];
         <!-- Tableau des bans -->
         <div class="section-container mb-10">
             <h2 class="section-title"><?= $trans['ban_user'] ?></h2>
+            <?php displayRoleBadges('can_ban_permanently', $pdo, $trans); ?>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -847,14 +1043,15 @@ $trans = $translations[$selected_lang];
         <!-- Tableau des tickets -->
         <div class="section-container mb-10">
             <h2 class="section-title"><?= $trans['ticket'] ?></h2>
+            <?php displayRoleBadges('can_reply_ticket', $pdo, $trans); ?>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <?php
-                            $columns = ['id', 'creator', 'ticket_name', 'message', 'created_at', 'is_closed', 'updated_at', 'deleted_at'];
+                            $columns = ['id', 'creator', 'ticket_name', 'message', 'created_at', 'is_closed', 'updated_at', 'deleted_at', 'actions'];
                             foreach ($columns as $column) {
-                                echo "<th scope='col' class='px-6 py-3'>" . htmlspecialchars($trans['columns'][$column]) . "</th>";
+                                echo "<th scope='col' class='px-6 py-3'>" . htmlspecialchars($trans['columns'][$column] ?? $column) . "</th>";
                             }
                             ?>
                         </tr>
@@ -887,8 +1084,22 @@ $trans = $translations[$selected_lang];
                                                 </div>
                                               </td>";
                                     } elseif ($column === 'is_closed') {
-                                        $status = $row['is_closed'] == 0 ? $trans['open'] : $trans['closed'];
-                                        echo "<td class='px-6 py-4 text-center'>{$status}</td>";
+                                        if (!empty($row['claimed_by'])) {
+                                            $staffStmt = $pdo->prepare("SELECT name FROM users WHERE id = :id");
+                                            $staffStmt->execute(['id' => $row['claimed_by']]);
+                                            $staffName = $staffStmt->fetchColumn() ?? 'Staff inconnu';
+                                            echo "<td class='px-6 py-4 text-center'>
+                                                    <span class='inline-flex items-center px-3 py-1 bg-purple-600 text-white rounded'>
+                                                        <i class='fas fa-user mr-1'></i> Pris par " . htmlspecialchars($staffName) . "
+                                                    </span>
+                                                  </td>";
+                                        } else {
+                                            echo "<td class='px-6 py-4 text-center'>
+                                                    <span class='inline-flex items-center px-3 py-1 bg-gray-500 text-white rounded'>
+                                                        <i class='fas fa-clock mr-1'></i> En attente
+                                                    </span>
+                                                  </td>";
+                                        }
                                     } elseif (in_array($column, ['created_at', 'updated_at', 'deleted_at'])) {
                                         $date = $row[$column] ?? '';
                                         if ($date) {
@@ -898,6 +1109,28 @@ $trans = $translations[$selected_lang];
                                         } else {
                                             echo "<td class='px-6 py-4 text-center'>-</td>";
                                         }
+                                    } elseif ($column === 'actions') {
+                                        echo "<td class='px-6 py-4 text-center'>
+                                                <a href='open_ticket.php?id=" . urlencode($row['id']) . "' class='inline-flex items-center px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 mr-2' title='Ouvrir'>
+                                                    <i class='fas fa-folder-open mr-1'></i> Ouvrir
+                                                </a>";
+                                        if (empty($row['claimed_by'])) {
+                                            echo "<form method='post' action='claim_ticket.php' style='display:inline;'>
+                                                    <input type='hidden' name='ticket_id' value='" . $row['id'] . "'>
+                                                    <button type='submit' class='inline-flex items-center px-3 py-2 bg-orange-500 text-white rounded hover:bg-orange-600' title='Réclamer'>
+                                                        <i class='fas fa-hand-paper mr-1'></i> Réclamer
+                                                    </button>
+                                                  </form>";
+                                        } else {
+                                            // Récupérer le nom du staff qui a réclamé le ticket
+                                            $staffStmt = $pdo->prepare("SELECT name FROM users WHERE id = :id");
+                                            $staffStmt->execute(['id' => $row['claimed_by']]);
+                                            $staffName = $staffStmt->fetchColumn() ?? 'Staff inconnu';
+                                            echo "<a href='view_profile.php?id=" . urlencode($row['claimed_by']) . "' class='inline-flex items-center px-3 py-2 bg-purple-600 text-white rounded ml-2 cursor-not-allowed opacity-60' title='Réclamé par' tabindex='-1' aria-disabled='true' onclick='return false;'>
+                                                    <i class='fas fa-user mr-1'></i> " . htmlspecialchars($staffName) . "
+                                                  </a>";
+                                        }
+                                        echo "</td>";
                                     } else {
                                         echo "<td class='px-6 py-4'>" . htmlspecialchars($row[$column] ?? '') . "</td>";
                                     }
@@ -918,6 +1151,7 @@ $trans = $translations[$selected_lang];
         <!-- Tableau des messages des tickets -->
         <div class="section-container mb-10">
             <h2 class="section-title"><?= $trans['ticket_message'] ?></h2>
+            <?php displayRoleBadges('can_reply_ticket', $pdo, $trans); ?>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
@@ -984,6 +1218,7 @@ $trans = $translations[$selected_lang];
         <!-- Tableau des archives des tickets -->
         <div class="section-container mb-10">
             <h2 class="section-title"><?= $trans['archive_ticket'] ?></h2>
+            <?php displayRoleBadges('can_view_reports', $pdo, $trans); ?>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

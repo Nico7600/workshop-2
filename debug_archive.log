@@ -1,0 +1,4 @@
+🟡 archive_tickets.php appelé
+🟢 Requête POST reçue : {"id":75}
+📩 Appel à sendTicketNotification avec l’email : fordiscorde2002@gmail.com
+🟡 archive_tickets.php appelé

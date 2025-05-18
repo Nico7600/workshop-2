@@ -1,23 +1,12 @@
 <?php
 session_start();
 
-require_once 'vendor/autoload.php';
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+require_once 'DatabaseConnection.php';
 
 try {
-    $pdo = new PDO(
-        sprintf('mysql:host=%s;dbname=%s', $_ENV['DB_HOST'], $_ENV['DB_NAME']),
-        $_ENV['DB_USER'],
-        $_ENV['DB_PASSWORD']
-    );
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = DatabaseConnection::getInstance()->getConnection();
 } catch (PDOException $e) {
     die('Erreur de connexion à la base de données : ' . $e->getMessage());
-}
-
-if (!$pdo) {
-    die('Impossible de se connecter à la base de données.');
 }
 
 try {
