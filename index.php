@@ -388,12 +388,12 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     <p class="text-gray-400 text-animate text-animate-delay"><?= $text['create_ticket_desc'] ?></p>
                 </a>
                 <a href="view_tickets.php" class="card bg-gray-800 shadow-md p-6 text-center block transform transition duration-200 hover:-translate-y-2 hover:shadow-lg active:translate-y-1 active:shadow-md">
-                    <i class="fas fa-list text-4xl mb-4 icon-list"></i>
+                    <i class="fas fa-list text-green-500 text-4xl mb-4"></i>
                     <h2 class="text-xl font-semibold mb-2 text-animate"><?= $text['view_tickets'] ?></h2>
                     <p class="text-gray-400 text-animate text-animate-delay"><?= $text['view_tickets_desc'] ?></p>
                 </a>
                 <a href="support.php" class="card bg-gray-800 shadow-md p-6 text-center block transform transition duration-200 hover:-translate-y-2 hover:shadow-lg active:translate-y-1 active:shadow-md">
-                    <i class="fas fa-headset text-4xl mb-4 icon-support"></i>
+                    <i class="fas fa-headset text-purple-400 text-4xl mb-4"></i>
                     <h2 class="text-xl font-semibold mb-2 text-animate"><?= $text['support'] ?></h2>
                     <p class="text-gray-400 text-animate text-animate-delay"><?= $text['support_desc'] ?></p>
                 </a>
@@ -403,12 +403,12 @@ $isLoggedIn = isset($_SESSION['user_id']);
             <h2 class="section-title text-center"><?= $text['information'] ?></h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <a href="about_us.php" class="card bg-gray-800 shadow-md p-6 text-center block transform transition duration-200 hover:-translate-y-2 hover:shadow-lg active:translate-y-1 active:shadow-md">
-                    <i class="fas fa-users text-4xl mb-4 text-purple-500"></i>
+                    <i class="fas fa-users text-blue-400 text-4xl mb-4"></i>
                     <h2 class="text-xl font-semibold mb-2 text-animate"><?= $text['about_us'] ?></h2>
                     <p class="text-gray-400 text-animate text-animate-delay"><?= $text['about_us_desc'] ?></p>
                 </a>
                 <a href="news.php" class="card bg-gray-800 shadow-md p-6 text-center block transform transition duration-200 hover:-translate-y-2 hover:shadow-lg active:translate-y-1 active:shadow-md">
-                    <i class="fas fa-newspaper text-4xl mb-4 text-cyan-500"></i>
+                    <i class="fas fa-newspaper text-cyan-400 text-4xl mb-4"></i>
                     <h2 class="text-xl font-semibold mb-2 text-animate"><?= $text['patch_notes'] ?></h2>
                     <p class="text-gray-400 text-animate text-animate-delay"><?= $text['patch_notes_desc'] ?></p>
                 </a>

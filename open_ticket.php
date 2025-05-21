@@ -25,8 +25,24 @@ if (!isset($_SESSION['user']['id'])) {
 
 
 $userId = $_SESSION['user']['id'];
-
 $isAdmin = $_SESSION['user']['is_admin'] ?? false;
+
+// Récupérer l'id_perm de l'utilisateur connecté
+$stmtPerm = $db->prepare("SELECT id_perm FROM users WHERE id = :id");
+$stmtPerm->bindParam(":id", $userId, PDO::PARAM_INT);
+$stmtPerm->execute();
+$userPerm = $stmtPerm->fetch(PDO::FETCH_ASSOC);
+$id_perm = $userPerm ? $userPerm['id_perm'] : null;
+
+// Récupérer la permission can_reply_ticket pour cet id_perm
+$canReplyTicket = false;
+if ($id_perm !== null) {
+    $stmtCanReply = $db->prepare("SELECT can_reply_ticket FROM permissions WHERE id_perm = :id_perm");
+    $stmtCanReply->bindParam(":id_perm", $id_perm, PDO::PARAM_INT);
+    $stmtCanReply->execute();
+    $permRow = $stmtCanReply->fetch(PDO::FETCH_ASSOC);
+    $canReplyTicket = $permRow && $permRow['can_reply_ticket'] == 1;
+}
 
 
 
@@ -204,7 +220,7 @@ if (!$ticket) {
 
 
 
-if (!$isAdmin && $ticket['creator'] != $userId) {
+if (!$isAdmin && $ticket['creator'] != $userId && !$canReplyTicket) {
 
     include 'header.php';
 

@@ -73,7 +73,7 @@ $translations = [
             'id' => 'ID',
             'creator' => 'Créateur',
             'ticket_name' => 'Nom du ticket',
-            'message' => 'Bericht',
+            'message' => 'Message', 
             'created_at' => 'Créé le',
             'is_closed' => 'Statut',
             'closed_at' => 'Fermé le',
@@ -270,7 +270,7 @@ $translations = [
         'creator' => 'Maker',
         'message' => 'Bericht',
         'created_at' => 'Aangemaakt op',
-        'is_closed' => 'Status',
+        'is_closed' => 'Statut',
         'closed_at' => 'Gesloten op',
         'closed_by' => 'Gesloten door',
         'open' => 'Open',
@@ -374,15 +374,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['patchnote_title'], $_
 
 $trans = $translations[$selected_lang];
 
-// Fonction pour afficher les badges des rôles ayant une permission donnée
 function displayRoleBadges($permissionCol, $pdo, $trans) {
-    // Map id_perm vers badge et nom
     $roleMap = [
-        1 => ['label' => 'Utilisateur', 'class' => 'badge-user'],
-        2 => ['label' => 'Guide', 'class' => 'badge-guide'],
-        3 => ['label' => 'Modérateur', 'class' => 'badge-modo'],
-        4 => ['label' => 'Développeur', 'class' => 'badge-dev'],
-        5 => ['label' => 'Administrateur', 'class' => 'badge-admin'],
+        1 => ['label' => 'Utilisateur', 'class' => 'badge-user', 'icon' => '<i class="fa-solid fa-user-minus"></i>'],
+        2 => ['label' => 'Guide', 'class' => 'badge-guide', 'icon' => '<i class="fa-solid fa-compass"></i>'],
+        3 => ['label' => 'Modérateur', 'class' => 'badge-modo', 'icon' => '<i class="fa-solid fa-user-shield"></i>'],
+        4 => ['label' => 'Développeur', 'class' => 'badge-dev', 'icon' => '<i class="fa-solid fa-code"></i>'],
+        5 => ['label' => 'Administrateur', 'class' => 'badge-admin', 'icon' => '<i class="fa-solid fa-crown"></i>'],
     ];
     $badges = [];
     $stmt = $pdo->query("SELECT id_perm, nom, $permissionCol FROM permissions");
@@ -390,16 +388,15 @@ function displayRoleBadges($permissionCol, $pdo, $trans) {
         if (!empty($row[$permissionCol])) {
             $role = $roleMap[$row['id_perm']] ?? null;
             if ($role) {
-                $badges[] = "<span class='role-badge {$role['class']}'>" . htmlspecialchars($role['label']) . "</span>";
+                $badges[] = "<span class='role-badge {$role['class']}'>" . $role['icon'] . " " . htmlspecialchars($role['label']) . "</span>";
             }
         }
     }
     if ($badges) {
-        echo "<div class='mb-2'>" . implode('', $badges) . "</div>";
+        echo "<div class='mb-2 flex flex-wrap gap-2'>" . implode('', $badges) . "</div>";
     }
 }
 
-// Fonction pour vérifier si un utilisateur a une permission donnée
 function userHasPermission($permissionId, $permissionCol, $pdo) {
     $stmt = $pdo->prepare("SELECT $permissionCol FROM permissions WHERE id_perm = :id_perm");
     $stmt->execute(['id_perm' => $permissionId]);
@@ -468,50 +465,70 @@ function userHasPermission($permissionId, $permissionCol, $pdo) {
             margin-bottom: 1rem;
         }
 
-        /* Modal container styles */
+        /* Modal container styles améliorés */
         .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            width: 100vw;
+            height: 100vh;
+            background: rgba(30, 41, 59, 0.55);
+            backdrop-filter: blur(2px);
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            transition: background 0.3s;
         }
-
         .modal.active {
             display: flex;
+            animation: modal-fade-in 0.25s;
         }
-
+        @keyframes modal-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
         .modal-content {
-            background-color: var(--gray-dark); /* Match page background */
-            color: var(--gray-light); /* Match text color */
+            background-color: var(--gray-dark);
+            color: var(--gray-light);
             padding: 2rem;
-            border-radius: 10px;
+            border-radius: 16px;
             width: 90%;
             max-width: 400px;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            position: relative;
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+            animation: modal-zoom-in 0.25s forwards;
         }
-
+        @keyframes modal-zoom-in {
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
         .modal-content button {
             margin: 0.5rem;
         }
-
         .modal-content h3 {
-            color: var(--cyan-light); /* Match heading color */
+            color: var(--cyan-light);
+            font-weight: 700;
+            letter-spacing: 0.02em;
         }
-
-        .modal-content textarea {
-            background-color: var(--gray-light);
-            color: var(--gray-dark);
+        .modal-content p,
+        .modal-content label,
+        .modal-content select,
+        .modal-content textarea,
+        .modal-content input {
+            color: #f3f4f6 !important;
+            font-weight: 500;
+        }
+        .modal-content textarea,
+        .modal-content input,
+        .modal-content select {
+            background-color: #23272f !important;
             border: 1px solid var(--purple-dark);
-            border-radius: 5px;
-            padding: 0.5rem;
-            width: 100%;
         }
 
         .notification {
@@ -538,12 +555,12 @@ function userHasPermission($permissionId, $permissionCol, $pdo) {
             }
 
             th, td {
-                font-size: 0.875rem; /* Réduction de la taille de la police */
-                padding: 0.5rem; /* Réduction de l'espacement */
+                font-size: 0.875rem; 
+                padding: 0.5rem; 
             }
 
             .table-container {
-                margin-bottom: 1rem; /* Ajustement de l'espacement */
+                margin-bottom: 1rem; 
             }
         }
 
@@ -574,15 +591,11 @@ function userHasPermission($permissionId, $permissionCol, $pdo) {
             }
 
             button {
-                font-size: 0.75rem; /* Réduction de la taille des boutons */
-                padding: 0.25rem 0.5rem; /* Ajustement de l'espacement des boutons */
+                font-size: 0.75rem; 
+                padding: 0.25rem 0.5rem; 
             }
         }
 
-        /* Centrer le texte dans tous les tableaux */
-        table, thead, tbody, th, td, tr {
-            text-align: center !important;
-        }
         /* Style pour les badges de rôles */
         .role-badge {
             display: inline-block;
@@ -598,48 +611,6 @@ function userHasPermission($permissionId, $permissionCol, $pdo) {
         .badge-modo { background: #f59e42; }         /* Modérateur */
         .badge-dev { background: #a78bfa; }          /* Développeur */
         .badge-admin { background: #ef4444; }        /* Administrateur */
-
-        table {
-            background-color: #23272f !important;
-            color: var(--gray-light) !important;
-        }
-        thead {
-            background-color: var(--purple-dark) !important;
-            color: var(--cyan-light) !important;
-        }
-        th {
-            border-bottom: 2px solid var(--purple) !important;
-            background-color: var(--purple-dark) !important;
-            color: var(--cyan-light) !important;
-        }
-        td {
-            background-color: #23272f !important;
-            color: var(--gray-light) !important;
-            border-bottom: 1px solid var(--purple) !important;
-        }
-        tbody tr {
-            transition: background 0.2s;
-        }
-        tbody tr:hover {
-            background-color: #312e81 !important;
-        }
-        /* Adapter les coins arrondis */
-        .sm\:rounded-lg {
-            border-radius: 0.75rem !important;
-            overflow: hidden;
-        }
-        /* Supprimer les backgrounds clairs hérités de Tailwind */
-        .bg-white,
-        .bg-gray-50,
-        .dark\:bg-gray-800,
-        .dark\:bg-gray-700 {
-            background-color: unset !important;
-        }
-        .text-gray-500,
-        .dark\:text-gray-400,
-        .text-gray-700 {
-            color: unset !important;
-        }
     </style>
     <script>
         // JavaScript to handle modal display
@@ -670,7 +641,32 @@ function userHasPermission($permissionId, $permissionCol, $pdo) {
         }
 
         function confirmPermissionChange(form) {
-            return confirm('Êtes-vous sûr de vouloir modifier cette permission ?');
+            event.preventDefault();
+            if (confirm('Êtes-vous sûr de vouloir modifier cette permission ?')) {
+                const formData = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.text())
+                .then(() => {
+
+                    const btn = form.querySelector('button[type="submit"]');
+                    const icon = btn.querySelector('i');
+                    if (icon.classList.contains('fa-check')) {
+                        icon.classList.remove('fa-check', 'text-green-500');
+                        icon.classList.add('fa-times', 'text-red-500');
+                    } else {
+                        icon.classList.remove('fa-times', 'text-red-500');
+                        icon.classList.add('fa-check', 'text-green-500');
+                    }
+                    showNotification('Permission modifiée !', 'success');
+                })
+                .catch(() => {
+                    showNotification('Erreur lors de la modification.', 'error');
+                });
+            }
+            return false; 
         }
     </script>
 </head>
@@ -724,7 +720,7 @@ function userHasPermission($permissionId, $permissionCol, $pdo) {
                                 'open_ticket_count' => $trans['open_tickets'],
                                 'closed_ticket_count' => $trans['closed_tickets'],
                                 'created_at' => $trans['created_at'],
-                                'updated_at' => $trans['updated_at'],
+                                'updated_at' => $trans['columns']['updated_at'],
                                 'actions' => $trans['actions'],
                             ];
                             foreach ($columns as $column => $label) {
@@ -738,7 +734,8 @@ function userHasPermission($permissionId, $permissionCol, $pdo) {
                         $stmt = $pdo->query("SELECT * FROM users");
                         if ($stmt->rowCount() > 0) {
                             while ($row = $stmt->fetch()) {
-                                echo "<tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200'>";
+                                echo "<tr class=\"bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600\">";
+                                $first = true;
                                 foreach (array_keys($columns) as $column) {
                                     if ($column === 'actions') {
                                         $viewModalId = "viewModal-" . $row['id'];
@@ -785,7 +782,6 @@ function userHasPermission($permissionId, $permissionCol, $pdo) {
       </td>";
 
 
-                                        // Modal pour voir les détails
                                         echo "<div id='$viewModalId' class='modal' style='display: none;'>
                                                 <div class='modal-content'>
                                                     <h3>Détails de l'utilisateur</h3>
