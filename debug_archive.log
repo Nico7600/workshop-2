@@ -10,3 +10,11 @@
 🟡 archive_tickets.php appelé
 🟢 Requête POST reçue : {"id":80}
 📩 Appel à sendTicketNotification avec l’email : depretsnicolas@gmail.com
+🟡 archive_tickets.php appelé
+🟡 archive_tickets.php appelé
+🟡 archive_tickets.php appelé
+🟡 archive_tickets.php appelé
+🟢 Requête POST reçue : {"id":84}
+📩 Appel à sendTicketNotification avec l’email : test@testest.be
+🟡 archive_tickets.php appelé
+🟡 archive_tickets.php appelé

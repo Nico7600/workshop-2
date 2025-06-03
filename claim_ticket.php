@@ -81,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ticket_id'])) {
             sendTicketNotification(
                 $userMail,
                 "Votre ticket #$ticketId est pris en charge",
-                "Bonjour,<br>Votre ticket a été pris en charge par {$staffName} qui est {$staffGrade}. Merci de patienter.",
-                $staffName
+                $ticketId,
+                $userId
             );
         }
     } catch (PDOException $e) {

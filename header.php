@@ -90,6 +90,34 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             transition: background 0.3s, height 0.3s;
         }
 
+        .main-nav-link:hover,
+        .main-nav-link:focus {
+            position: relative;
+        }
+
+        .main-nav-link:hover::after,
+        .main-nav-link:focus::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -8px;
+            height: 6px;
+            background: #8b5cf6;
+            background: linear-gradient(90deg, #38bdf8 0%, #8b5cf6 50%, #ef4444 100%);
+            border-radius: 8px;
+            box-shadow: 0 2px 16px 0 #8b5cf680;
+            animation: underlineGrow 0.5s cubic-bezier(.4, 0, .2, 1);
+            transition: background 0.3s, height 0.3s;
+            z-index: 1;
+        }
+
+        .main-nav-link.nav-active:hover::after,
+        .main-nav-link.nav-active:focus::after {
+            display: none;
+        }
+
         @keyframes underlineGrow {
             from {
                 width: 0;
@@ -297,8 +325,21 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <div class="relative w-full lg:w-auto">
                     <button id="profileDropdownButton" onclick="toggleDropdown('profileDropdown')"
                         class="text-white flex items-center space-x-2 hover:text-gray-300 w-full lg:w-auto">
-                        <i class="fas fa-user-circle text-2xl"></i>
-                        <span><?= htmlspecialchars($_SESSION['user']['name'] ?? $text['connect']) ?></span>
+                        <i class="fa-solid fa-circle-user text-2xl align-middle"
+                           style="background: linear-gradient(90deg,#38bdf8 0%,#8b5cf6 50%,#ef4444 100%);
+                                  -webkit-background-clip: text;
+                                  -webkit-text-fill-color: transparent;
+                                  background-clip: text;
+                                  text-fill-color: transparent;">
+                        </i>
+                        <span
+                            style="background: linear-gradient(90deg, #38bdf8 0%, #8b5cf6 50%, #ef4444 100%);
+                                   -webkit-background-clip: text;
+                                   -webkit-text-fill-color: transparent;
+                                   background-clip: text;
+                                   text-fill-color: transparent;">
+                            <?= htmlspecialchars($_SESSION['user']['name'] ?? $text['connect']) ?>
+                        </span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div id="profileDropdown"

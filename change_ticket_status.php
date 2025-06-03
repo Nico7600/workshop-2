@@ -50,7 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ticket_id'], $_POST['
                 sendTicketNotification(
                     $userMail,
                     "Changement de statut du ticket #$ticketId",
-                    "Bonjour,<br>Le statut de votre ticket a été modifié : <b>$status</b>."
+                    $ticketId,
+                    $userId
                 );
             }
         }

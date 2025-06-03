@@ -75,14 +75,22 @@
         }
 
         .card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s, border-color 0.3s;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
+            background-color: #1e293b;
         }
 
         .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
+            border-color: #38bdf8;
+            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.25);
+            color: #fff;
+        }
+
+        .card:active {
+            background: #0ea5e9;
+            border-color: #2563eb;
         }
 
         .section-title {
@@ -407,7 +415,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     <h2 class="text-xl font-semibold mb-2 text-animate"><?= $text['about_us'] ?></h2>
                     <p class="text-gray-400 text-animate text-animate-delay"><?= $text['about_us_desc'] ?></p>
                 </a>
-                <a href="news.php" class="card bg-gray-800 shadow-md p-6 text-center block transform transition duration-200 hover:-translate-y-2 hover:shadow-lg active:translate-y-1 active:shadow-md">
+                <a href="patchnote.php" class="card bg-gray-800 shadow-md p-6 text-center block transform transition duration-200 hover:-translate-y-2 hover:shadow-lg active:translate-y-1 active:shadow-md">
                     <i class="fas fa-newspaper text-cyan-400 text-4xl mb-4"></i>
                     <h2 class="text-xl font-semibold mb-2 text-animate"><?= $text['patch_notes'] ?></h2>
                     <p class="text-gray-400 text-animate text-animate-delay"><?= $text['patch_notes_desc'] ?></p>

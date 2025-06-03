@@ -89,11 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bindParam(':creatorId', $ticket['creator'], PDO::PARAM_INT);
     $stmt->execute();
 
-    // Supprimer le ticket de la table ticket
-    $stmt = $db->prepare("DELETE FROM ticket WHERE id = :id");
-    $stmt->bindParam(':id', $ticketId, PDO::PARAM_INT);
-    $stmt->execute();
-
     // Envoi de mail à l'utilisateur
     require_once __DIR__ . '/mail_utils.php';
     $userMailStmt = $db->prepare("SELECT email FROM users WHERE id = :id");
@@ -104,12 +99,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         file_put_contents(__DIR__ . '/debug_archive.log', "📩 Appel à sendTicketNotification avec l’email : $userMail\n", FILE_APPEND);
 
         sendTicketNotification(
-    $userMail,
-    "Votre ticket #$ticketId a été archivé",
-    "Bonjour,<br>Votre ticket <b>" . htmlspecialchars($ticket['ticket_name']) . "</b> a été archivé.",
-    $ticket['creator']
-);
+            $userMail,
+            "Votre ticket #$ticketId a été archivé",
+            $ticketId, // On passe l'ID du ticket AVANT suppression
+            $ticket['creator']
+        );
     }
+
+    // Supprimer le ticket de la table ticket
+    $stmt = $db->prepare("DELETE FROM ticket WHERE id = :id");
+    $stmt->bindParam(':id', $ticketId, PDO::PARAM_INT);
+    $stmt->execute();
 
     http_response_code(200);
     echo "Ticket archivé avec succès.";
@@ -190,4 +190,3 @@ include 'header.php';
     <?php include 'footer.php'; ?>
 </body>
 </html>
-	
