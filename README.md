@@ -53,9 +53,34 @@ Elle propose une interface intuitive, un système de rôles avancé, la gestion 
 
 ### 🏅 Badges de rôles
 
-| ![Utilisateur](images_statut/utilisateur.png) Utilisateur | ![Guide](images_statut/guide.png) Guide | ![Modérateur](images_statut/modo.png) Modérateur | ![Développeur](images_statut/dev.png) Développeur | ![Admin](images_statut/admin.png) Admin |
-|:---:|:---:|:---:|:---:|:---:|
-| Utilisateur | Guide | Modérateur | Développeur | Administrateur |
+<p align="center">
+  <img src="images_statut/utilisateur.png" alt="Utilisateur" title="Utilisateur" width="60" style="margin:0 12px;vertical-align:middle;">
+  <img src="images_statut/guide.png" alt="Guide" title="Guide" width="60" style="margin:0 12px;vertical-align:middle;">
+  <img src="images_statut/modo.png" alt="Modérateur" title="Modérateur" width="60" style="margin:0 12px;vertical-align:middle;">
+  <img src="images_statut/dev.png" alt="Développeur" title="Développeur" width="60" style="margin:0 12px;vertical-align:middle;">
+  <img src="images_statut/admin.png" alt="Admin" title="Administrateur" width="60" style="margin:0 12px;vertical-align:middle;">
+</p>
+
+<p align="center">
+  <b>Utilisateur</b> &nbsp; | &nbsp; <b>Guide</b> &nbsp; | &nbsp; <b>Modérateur</b> &nbsp; | &nbsp; <b>Développeur</b> &nbsp; | &nbsp; <b>Administrateur</b>
+</p>
+
+---
+
+## 🖼️ Aperçu du site
+
+<p align="center">
+  <a href="https://workshopgroupe.nicolasdeprets.online" target="_blank">
+    <img src="https://workshopgroupe.nicolasdeprets.online/uploads/preview_home.png" alt="Aperçu MyTicket" style="border-radius:12px;box-shadow:0 2px 16px #38bdf880;max-width:90%;">
+  </a>
+</p>
+
+---
+
+## 🌐 Site officiel
+
+Le site officiel est hébergé chez **OVH France**.<br>
+🔗 **Accès direct : [workshopgroupe.nicolasdeprets.online](https://workshopgroupe.nicolasdeprets.online)**
 
 ---
 
@@ -99,7 +124,7 @@ Elle propose une interface intuitive, un système de rôles avancé, la gestion 
 ## 📂 Structure du projet
 
 ```text
-workshop-2-main/
+workshop-2/
 ├── about_us.php
 ├── admin.php
 ├── archive_tickets.php
