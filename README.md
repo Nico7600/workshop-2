@@ -30,9 +30,6 @@
 **MyTicket** est une application web moderne permettant la gestion de tickets de support pour les utilisateurs et les administrateurs.  
 Elle propose une interface intuitive, un système de rôles avancé, la gestion des permissions, l’archivage des tickets, et bien plus.
 
-> **Démo rapide**  
-> [![Voir la démo](https://img.shields.io/badge/Demo-MyTicket-blue?logo=eye&style=for-the-badge)](https://github.com/Nico7600/workshop-2)
-
 ---
 
 ### ✨ Fonctionnalités principales
@@ -69,11 +66,13 @@ Elle propose une interface intuitive, un système de rôles avancé, la gestion 
 
 ## 🖼️ Aperçu du site
 
+<!-- Si l'image preview_home.png n'existe pas ou ne s'affiche pas, ajoutez une capture d'écran réelle dans uploads/preview_home.png -->
 <p align="center">
   <a href="https://workshopgroupe.nicolasdeprets.online" target="_blank">
-    <img src="https://workshopgroupe.nicolasdeprets.online/uploads/preview_home.png" alt="Aperçu MyTicket" style="border-radius:12px;box-shadow:0 2px 16px #38bdf880;max-width:90%;">
+    <img src="uploads/preview_home.png" alt="Aperçu MyTicket" style="border-radius:12px;box-shadow:0 2px 16px #38bdf880;max-width:90%;">
   </a>
 </p>
+<!-- Si l'image ne s'affiche pas, vérifiez que le fichier uploads/preview_home.png existe bien dans le dépôt -->
 
 ---
 
