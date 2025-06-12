@@ -4,7 +4,7 @@
 -->
 
 <p align="center">
-  <img src="workshop-2-main/uploads/logo.png" alt="MyTicket Logo" width="100" />
+  <img src="uploads/logo.png" alt="MyTicket Logo" width="100" />
 </p>
 
 <h1 align="center">🎟️ MyTicket</h1>
@@ -41,7 +41,7 @@
 
 ### Badges de rôles
 
-| ![Utilisateur](workshop-2-main/images_statut/utilisateur.png) Utilisateur | ![Guide](workshop-2-main/images_statut/guide.png) Guide | ![Modérateur](workshop-2-main/images_statut/modo.png) Modérateur | ![Développeur](workshop-2-main/images_statut/dev.png) Développeur | ![Admin](workshop-2-main/images_statut/admin.png) Admin |
+| ![Utilisateur](images_statut/utilisateur.png) Utilisateur | ![Guide](images_statut/guide.png) Guide | ![Modérateur](images_statut/modo.png) Modérateur | ![Développeur](images_statut/dev.png) Développeur | ![Admin](images_statut/admin.png) Admin |
 |:---:|:---:|:---:|:---:|:---:|
 | Utilisateur | Guide | Modérateur | Développeur | Administrateur |
 
@@ -51,7 +51,7 @@
 
 1. **Cloner le dépôt**
    ```bash
-   git clone https://github.com/votre-utilisateur/workshop-2.git
+   git clone https://github.com/Nico7600/workshop-2.git
    cd workshop-2-main
    ```
 
@@ -106,5 +106,5 @@ MIT
 ---
 
 <p align="center">
-  <b>MyTicket - 2024</b>
+  <b>MyTicket - 2024-2025</b>
 </p>
